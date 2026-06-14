@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { DUMMY_SUPPLIERS } from "@/lib/dummy-data/suppliers";
 import { DUMMY_CLIENTS } from "@/lib/dummy-data/clients";
 import {
@@ -12,20 +13,35 @@ import {
   CHALLENGE_LABELS,
 } from "@/types";
 import { cn } from "@/lib/utils";
+import { useSupplierStatusStore } from "@/lib/store/supplier-status-store";
 
 type Tab = "client" | "supplier";
 
 export default function AdminCompaniesPage() {
   const [tab, setTab] = useState<Tab>("supplier");
   const [query, setQuery] = useState("");
+  const [industryFilter, setIndustryFilter] = useState<string>("");
+  const [scaleFilter, setScaleFilter] = useState<string>("");
+  const [showInactive, setShowInactive] = useState(true);
+
+  const overrides = useSupplierStatusStore((s) => s.overrides);
+  const toggle = useSupplierStatusStore((s) => s.toggle);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   const list = tab === "supplier" ? DUMMY_SUPPLIERS : DUMMY_CLIENTS;
-  const filtered = list.filter(
-    (c) =>
-      c.name.includes(query) ||
-      INDUSTRY_LABELS[c.industry].includes(query) ||
-      c.prefecture.includes(query),
-  );
+
+  const filtered = list.filter((c) => {
+    if (query && !(c.name + INDUSTRY_LABELS[c.industry] + c.prefecture).includes(query))
+      return false;
+    if (industryFilter && c.industry !== industryFilter) return false;
+    if (scaleFilter && c.employeeScale !== scaleFilter) return false;
+    if (tab === "supplier" && !showInactive) {
+      const isActive = overrides[c.id] ?? c.isActive ?? true;
+      if (!isActive) return false;
+    }
+    return true;
+  });
 
   return (
     <div>
@@ -60,6 +76,40 @@ export default function AdminCompaniesPage() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+        <Select
+          value={industryFilter}
+          onChange={(e) => setIndustryFilter(e.target.value)}
+          className="w-auto min-w-[140px]"
+        >
+          <option value="">業種(全て)</option>
+          {Object.entries(INDUSTRY_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </Select>
+        <Select
+          value={scaleFilter}
+          onChange={(e) => setScaleFilter(e.target.value)}
+          className="w-auto min-w-[140px]"
+        >
+          <option value="">規模(全て)</option>
+          {Object.entries(EMPLOYEE_SCALE_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </Select>
+        {tab === "supplier" && (
+          <label className="flex items-center gap-2 text-xs text-navy-900/70">
+            <input
+              type="checkbox"
+              checked={showInactive}
+              onChange={(e) => setShowInactive(e.target.checked)}
+            />
+            無効化済みも表示
+          </label>
+        )}
       </div>
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-navy/10 bg-white shadow-card">
@@ -72,49 +122,72 @@ export default function AdminCompaniesPage() {
               <th className="px-4 py-3 font-medium">所在地</th>
               <th className="px-4 py-3 font-medium">タグ</th>
               {tab === "supplier" && (
-                <th className="px-4 py-3 font-medium">実績</th>
+                <>
+                  <th className="px-4 py-3 font-medium">実績</th>
+                  <th className="px-4 py-3 font-medium text-right">状態</th>
+                </>
               )}
             </tr>
           </thead>
           <tbody className="divide-y divide-navy/10">
-            {filtered.map((c) => (
-              <tr key={c.id} className="hover:bg-navy-50/40">
-                <td className="px-4 py-3 font-medium text-navy-900">
-                  {c.name}
-                </td>
-                <td className="px-4 py-3 text-navy-900/80">
-                  {INDUSTRY_LABELS[c.industry]}
-                </td>
-                <td className="px-4 py-3 text-navy-900/80">
-                  {EMPLOYEE_SCALE_LABELS[c.employeeScale]}
-                </td>
-                <td className="px-4 py-3 text-navy-900/80">{c.prefecture}</td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-1">
-                    {(tab === "supplier"
-                      ? c.serviceCategories
-                      : c.challenges
-                    )?.map((cat) => (
-                      <Badge key={cat} variant="outline">
-                        {CHALLENGE_LABELS[cat]}
+            {filtered.map((c) => {
+              const isActive = hydrated
+                ? overrides[c.id] ?? c.isActive ?? true
+                : c.isActive ?? true;
+              return (
+                <tr key={c.id} className="hover:bg-navy-50/40">
+                  <td className="px-4 py-3 font-medium text-navy-900">
+                    {c.name}
+                    {tab === "supplier" && !isActive && (
+                      <Badge variant="muted" className="ml-2">
+                        無効
                       </Badge>
-                    ))}
-                  </div>
-                </td>
-                {tab === "supplier" && (
-                  <td className="px-4 py-3 text-navy-900/80 text-xs">
-                    成約 {c.successCount ?? 0} / 打診 {c.totalOffers ?? 0}{" "}
-                    <span className="text-navy-900/50">
-                      ({Math.round(((c.responseRate ?? 0) * 100))}%)
-                    </span>
+                    )}
                   </td>
-                )}
-              </tr>
-            ))}
+                  <td className="px-4 py-3 text-navy-900/80">
+                    {INDUSTRY_LABELS[c.industry]}
+                  </td>
+                  <td className="px-4 py-3 text-navy-900/80">
+                    {EMPLOYEE_SCALE_LABELS[c.employeeScale]}
+                  </td>
+                  <td className="px-4 py-3 text-navy-900/80">{c.prefecture}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1">
+                      {(tab === "supplier"
+                        ? c.serviceCategories
+                        : c.challenges
+                      )
+                        ?.slice(0, 3)
+                        .map((cat) => (
+                          <Badge key={cat} variant="outline">
+                            {CHALLENGE_LABELS[cat]}
+                          </Badge>
+                        ))}
+                    </div>
+                  </td>
+                  {tab === "supplier" && (
+                    <>
+                      <td className="px-4 py-3 text-navy-900/80 text-xs">
+                        成約 {c.successCount ?? 0} / 打診 {c.totalOffers ?? 0}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          size="sm"
+                          variant={isActive ? "outline" : "supplier"}
+                          onClick={() => toggle(c.id, isActive)}
+                        >
+                          {isActive ? "無効化" : "有効化"}
+                        </Button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              );
+            })}
             {filtered.length === 0 && (
               <tr>
                 <td
-                  colSpan={tab === "supplier" ? 6 : 5}
+                  colSpan={tab === "supplier" ? 7 : 5}
                   className="px-4 py-12 text-center text-navy-900/50"
                 >
                   該当する企業がありません。

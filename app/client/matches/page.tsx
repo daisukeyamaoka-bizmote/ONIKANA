@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input, Select } from "@/components/ui/input";
 import { MatchStatusBadge } from "@/components/shared/match-status-badge";
 import { findMatchesByClientId } from "@/lib/dummy-data/matches";
 import { findSupplierById } from "@/lib/dummy-data/suppliers";
@@ -22,11 +23,29 @@ const FILTERS: { id: "all" | MatchStatus; label: string }[] = [
   { id: "rejected", label: "辞退" },
 ];
 
+type SortKey = "score" | "updatedAt";
+
 export default function ClientMatchesPage() {
   const [filter, setFilter] = useState<"all" | MatchStatus>("all");
-  const all = findMatchesByClientId(MOCK_CLIENT.id);
-  const filtered =
-    filter === "all" ? all : all.filter((m) => m.status === filter);
+  const [query, setQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("updatedAt");
+
+  const matches = useMemo(() => {
+    const all = findMatchesByClientId(MOCK_CLIENT.id);
+    let f = filter === "all" ? all : all.filter((m) => m.status === filter);
+    if (query) {
+      f = f.filter((m) => {
+        const s = findSupplierById(m.supplierId);
+        return (s?.name ?? "").includes(query);
+      });
+    }
+    f.sort((a, b) =>
+      sortKey === "score"
+        ? b.matchScore - a.matchScore
+        : new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
+    return f;
+  }, [filter, query, sortKey]);
 
   return (
     <div>
@@ -35,7 +54,25 @@ export default function ClientMatchesPage() {
         貴社のマッチング案件をすべて表示しています。
       </p>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="flex-1 min-w-[200px] max-w-sm">
+          <Input
+            placeholder="支援先名で検索"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+        <Select
+          value={sortKey}
+          onChange={(e) => setSortKey(e.target.value as SortKey)}
+          className="w-auto"
+        >
+          <option value="updatedAt">更新日順</option>
+          <option value="score">スコア順</option>
+        </Select>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
             key={f.id}
@@ -50,10 +87,13 @@ export default function ClientMatchesPage() {
             {f.label}
           </button>
         ))}
+        <span className="ml-auto text-xs text-navy-900/50 self-center">
+          {matches.length} 件
+        </span>
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((m) => {
+        {matches.map((m) => {
           const s = findSupplierById(m.supplierId);
           if (!s) return null;
           return (
@@ -88,7 +128,7 @@ export default function ClientMatchesPage() {
             </Card>
           );
         })}
-        {filtered.length === 0 && (
+        {matches.length === 0 && (
           <p className="col-span-full text-center text-navy-900/50 py-12">
             該当するマッチングはありません。
           </p>

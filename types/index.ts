@@ -70,6 +70,13 @@ export interface Company {
   responseRate?: number;
   successCount?: number;
   totalOffers?: number;
+  // 支援先プロフィール拡張(⑤⑦⑧対応)
+  strengthLine?: string;          // 強み一行(レコメンドカードで表示)
+  serviceMaterialUrl?: string;    // サービス資料URL(ダミーで # でも可)
+  websiteUrl?: string;            // 公式サイトURL
+  isActive?: boolean;             // 有効/無効トグル(管理者が制御)
+  signupDate?: string;            // Giver会員登録日
+  representativeName?: string;    // 代表者名(プロフィール表示用)
 
   createdAt: string;
 }

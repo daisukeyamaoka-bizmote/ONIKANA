@@ -5,7 +5,13 @@ import type {
   Industry,
   BudgetRange,
 } from "@/types";
-import { BUDGET_TO_AMOUNT } from "@/types";
+import {
+  BUDGET_TO_AMOUNT,
+  INDUSTRY_LABELS,
+  EMPLOYEE_SCALE_LABELS,
+  CHALLENGE_LABELS,
+  BUDGET_LABELS,
+} from "@/types";
 
 // REQUIREMENTS.md セクション6 を参照
 // 5軸タグ: 業種・規模・課題・地域・予算
@@ -108,7 +114,7 @@ export function rankSuppliers(
     weights?: { tag: number; success: number };
   } = {},
 ): ScoredSupplier[] {
-  const { threshold = 50, limit = 5, weights = { tag: 0.5, success: 0.5 } } =
+  const { threshold = 50, limit = 10, weights = { tag: 0.5, success: 0.5 } } =
     options;
 
   return suppliers
@@ -116,4 +122,50 @@ export function rankSuppliers(
     .filter((s) => s.matchScore >= threshold)
     .sort((a, b) => b.matchScore - a.matchScore)
     .slice(0, limit);
+}
+
+// マッチ理由を3つの短い日本語フレーズで返す(デモ説明用)
+export function buildMatchReasons(
+  client: ClientCriteria,
+  supplier: Company,
+  breakdown: TagBreakdown,
+): string[] {
+  const reasons: string[] = [];
+
+  if (breakdown.category && supplier.serviceCategories) {
+    const overlap = supplier.serviceCategories.filter((s) =>
+      client.challenges.includes(s),
+    );
+    if (overlap.length > 0) {
+      reasons.push(
+        `課題「${overlap.map((c) => CHALLENGE_LABELS[c]).join("・")}」に直接対応`,
+      );
+    }
+  }
+  if (breakdown.industry) {
+    reasons.push(`${INDUSTRY_LABELS[client.industry]}業界への支援実績あり`);
+  }
+  if (breakdown.scale) {
+    reasons.push(`${EMPLOYEE_SCALE_LABELS[client.employeeScale]}規模の企業を主な対象としている`);
+  }
+  if (breakdown.area) {
+    if (supplier.targetAreas?.includes("全国")) {
+      reasons.push("全国対応・地理的制約なし");
+    } else {
+      reasons.push(`${client.prefecture}を含むエリアで対応可能`);
+    }
+  }
+  if (breakdown.budget) {
+    reasons.push(
+      `予算${BUDGET_LABELS[client.budget]}でも提供可能な価格帯`,
+    );
+  }
+  if ((supplier.successCount ?? 0) >= 20) {
+    reasons.push(`過去${supplier.successCount}件の商談実績・信頼性◎`);
+  }
+  if (supplier.meetingPriority === "high") {
+    reasons.push("打診の返答が早く・前向きな対応傾向");
+  }
+
+  return reasons.slice(0, 3); // 上位3つに絞る
 }

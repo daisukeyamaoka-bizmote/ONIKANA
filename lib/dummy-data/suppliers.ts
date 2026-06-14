@@ -1,7 +1,8 @@
 import type { Company } from "@/types";
 
-// 支援先企業20社のダミーデータ
-// REQUIREMENTS.md セクション9.1 を参照
+// 支援先(Giver)企業20社のダミーデータ
+// 架空企業のみ。実在企業名は使用していません。
+// REQUIREMENTS.md セクション9.1 + 拡張要件⑤⑦⑧に対応
 export const DUMMY_SUPPLIERS: Company[] = [
   {
     id: "s001",
@@ -13,6 +14,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "エンジニア採用支援とスカウト代行に特化。IT・SaaS企業を中心に200社以上の採用実績。",
+    strengthLine: "ITエンジニア採用に特化、平均3ヶ月で初採用を実現",
+    representativeName: "佐藤 花子",
     serviceCategories: ["hr_recruitment"],
     targetIndustries: ["it", "manufacturing", "service"],
     targetScales: ["small", "sme", "mid"],
@@ -22,6 +25,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.78,
     successCount: 24,
     totalOffers: 32,
+    serviceMaterialUrl: "#material-s001",
+    websiteUrl: "https://example.com/peoplebridge",
+    isActive: true,
+    signupDate: "2024-01-10",
     createdAt: "2024-01-10T00:00:00Z",
   },
   {
@@ -34,6 +41,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "中小企業向けDX伴走支援。SaaS導入・業務プロセス改革を伴走型で支援。",
+    strengthLine: "SaaS導入で平均30%の業務工数削減を実現",
+    representativeName: "高橋 健",
     serviceCategories: ["dx_promotion", "it_infrastructure"],
     targetIndustries: ["manufacturing", "retail", "wholesale", "service"],
     targetScales: ["small", "sme"],
@@ -43,6 +52,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.85,
     successCount: 18,
     totalOffers: 22,
+    serviceMaterialUrl: "#material-s002",
+    websiteUrl: "https://example.com/digitalpath",
+    isActive: true,
+    signupDate: "2024-02-05",
     createdAt: "2024-02-05T00:00:00Z",
   },
   {
@@ -55,6 +68,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "BtoBインサイドセールス代行。リード獲得から商談化までワンストップで支援。",
+    strengthLine: "月間2,000件のアウトバウンドで安定商談獲得",
+    representativeName: "斉藤 智子",
     serviceCategories: ["sales_strengthening", "marketing"],
     targetIndustries: ["it", "manufacturing", "service", "wholesale"],
     targetScales: ["sme", "mid"],
@@ -64,6 +79,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.62,
     successCount: 28,
     totalOffers: 45,
+    serviceMaterialUrl: "#material-s003",
+    websiteUrl: "https://example.com/growthsail",
+    isActive: true,
+    signupDate: "2024-01-20",
     createdAt: "2024-01-20T00:00:00Z",
   },
   {
@@ -76,6 +95,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "大阪府",
     description:
       "BtoBマーケティング戦略立案・MA(マーケティングオートメーション)運用支援。",
+    strengthLine: "関西圏のBtoB SaaSで導入実績80社超",
+    representativeName: "西村 拓也",
     serviceCategories: ["marketing", "sales_strengthening"],
     targetIndustries: ["it", "manufacturing", "service"],
     targetScales: ["small", "sme", "mid"],
@@ -85,6 +106,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.71,
     successCount: 16,
     totalOffers: 24,
+    serviceMaterialUrl: "#material-s004",
+    websiteUrl: "https://example.com/markelize",
+    isActive: true,
+    signupDate: "2024-03-12",
     createdAt: "2024-03-12T00:00:00Z",
   },
   {
@@ -97,6 +122,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "間接費削減コンサルティング。購買改革・コスト最適化のプロフェッショナル。",
+    strengthLine: "間接費の平均17%削減・成果連動契約も対応",
+    representativeName: "森 一郎",
     serviceCategories: ["cost_reduction"],
     targetIndustries: ["manufacturing", "retail", "wholesale", "construction"],
     targetScales: ["sme", "mid", "large"],
@@ -106,6 +133,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.68,
     successCount: 12,
     totalOffers: 19,
+    serviceMaterialUrl: "#material-s005",
+    websiteUrl: "https://example.com/revrent",
+    isActive: true,
+    signupDate: "2024-02-18",
     createdAt: "2024-02-18T00:00:00Z",
   },
   {
@@ -118,6 +149,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "中堅企業向け経営戦略コンサルティング。事業計画・組織変革を支援。",
+    strengthLine: "上場準備中の中堅企業に伴走、IPO実績5社",
+    representativeName: "藤田 直人",
     serviceCategories: ["management_consulting"],
     targetIndustries: ["manufacturing", "service", "retail", "construction"],
     targetScales: ["sme", "mid"],
@@ -127,6 +160,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.45,
     successCount: 8,
     totalOffers: 18,
+    serviceMaterialUrl: "#material-s006",
+    websiteUrl: "https://example.com/synaxct",
+    isActive: true,
+    signupDate: "2024-01-15",
     createdAt: "2024-01-15T00:00:00Z",
   },
   {
@@ -138,6 +175,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "sme",
     prefecture: "愛知県",
     description: "クラウド移行・セキュリティ強化に強み。中部エリア中心に支援。",
+    strengthLine: "AWS/Azure移行を150案件支援、中部エリア最大手",
+    representativeName: "石川 浩二",
     serviceCategories: ["it_infrastructure", "dx_promotion"],
     targetIndustries: ["manufacturing", "service", "logistics"],
     targetScales: ["sme", "mid", "large"],
@@ -147,6 +186,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.66,
     successCount: 14,
     totalOffers: 21,
+    serviceMaterialUrl: "#material-s007",
+    websiteUrl: "https://example.com/platit",
+    isActive: true,
+    signupDate: "2024-03-01",
     createdAt: "2024-03-01T00:00:00Z",
   },
   {
@@ -159,6 +202,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "中小企業向け法務顧問・契約書レビュー。ITサービス契約・利用規約作成に強み。",
+    strengthLine: "IT契約・利用規約レビューを年間300件以上",
+    representativeName: "宮本 久美",
     serviceCategories: ["legal_compliance"],
     targetIndustries: ["it", "service", "retail"],
     targetScales: ["micro", "small", "sme"],
@@ -168,6 +213,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.82,
     successCount: 21,
     totalOffers: 26,
+    serviceMaterialUrl: "#material-s008",
+    websiteUrl: "https://example.com/lightly-law",
+    isActive: true,
+    signupDate: "2024-02-22",
     createdAt: "2024-02-22T00:00:00Z",
   },
   {
@@ -180,6 +229,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "ベンチャー融資・補助金申請支援。スタートアップから中堅まで幅広く対応。",
+    strengthLine: "ものづくり補助金/事業再構築の採択率82%",
+    representativeName: "村井 大樹",
     serviceCategories: ["finance_funding"],
     targetIndustries: ["it", "service", "manufacturing", "realestate"],
     targetScales: ["micro", "small", "sme", "mid"],
@@ -189,6 +240,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.74,
     successCount: 19,
     totalOffers: 27,
+    serviceMaterialUrl: "#material-s009",
+    websiteUrl: "https://example.com/fundlink",
+    isActive: true,
+    signupDate: "2024-01-25",
     createdAt: "2024-01-25T00:00:00Z",
   },
   {
@@ -200,6 +255,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "東京都",
     description: "評価制度設計・組織開発支援。人事評価運用の伴走支援に強み。",
+    strengthLine: "OKR/MBO導入支援・運用定着まで一気通貫",
+    representativeName: "岡田 純子",
     serviceCategories: ["hr_retention", "management_consulting"],
     targetIndustries: ["service", "it", "manufacturing", "medical"],
     targetScales: ["small", "sme", "mid"],
@@ -209,6 +266,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.7,
     successCount: 17,
     totalOffers: 25,
+    serviceMaterialUrl: "#material-s010",
+    websiteUrl: "https://example.com/officeair",
+    isActive: true,
+    signupDate: "2024-02-10",
     createdAt: "2024-02-10T00:00:00Z",
   },
   {
@@ -221,6 +282,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "BtoB企業のブランド再構築・コーポレートブランディング。製造業実績多数。",
+    strengthLine: "製造業のリブランディング100社実績",
+    representativeName: "竹内 美穂",
     serviceCategories: ["marketing"],
     targetIndustries: ["manufacturing", "service", "wholesale"],
     targetScales: ["sme", "mid"],
@@ -230,6 +293,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.42,
     successCount: 9,
     totalOffers: 21,
+    serviceMaterialUrl: "#material-s011",
+    websiteUrl: "https://example.com/brandroute",
+    isActive: true,
+    signupDate: "2024-03-15",
     createdAt: "2024-03-15T00:00:00Z",
   },
   {
@@ -242,6 +309,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "神奈川県",
     description:
       "1on1導入・エンゲージメント向上支援。組織サーベイから改善まで一気通貫。",
+    strengthLine: "組織サーベイ→改善まで90日プログラム提供",
+    representativeName: "三浦 翔太",
     serviceCategories: ["hr_retention"],
     targetIndustries: ["service", "manufacturing", "it", "construction"],
     targetScales: ["sme", "mid"],
@@ -251,6 +320,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.76,
     successCount: 22,
     totalOffers: 29,
+    serviceMaterialUrl: "#material-s012",
+    websiteUrl: "https://example.com/teamboost",
+    isActive: true,
+    signupDate: "2024-01-30",
     createdAt: "2024-01-30T00:00:00Z",
   },
   {
@@ -262,6 +335,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "東京都",
     description: "基幹システム刷新・PMO支援。中堅製造業のSAP導入実績多数。",
+    strengthLine: "SAP/Oracle刷新PMO実績25案件",
+    representativeName: "田所 剛",
     serviceCategories: ["it_infrastructure", "dx_promotion"],
     targetIndustries: ["manufacturing", "wholesale", "logistics"],
     targetScales: ["mid", "large"],
@@ -271,6 +346,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.38,
     successCount: 7,
     totalOffers: 18,
+    serviceMaterialUrl: "#material-s013",
+    websiteUrl: "https://example.com/promethod",
+    isActive: false, // デモ用に無効化サンプル
+    signupDate: "2024-02-28",
     createdAt: "2024-02-28T00:00:00Z",
   },
   {
@@ -282,6 +361,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "sme",
     prefecture: "福岡県",
     description: "営業DX・SFA(Salesforce)導入伴走支援。九州エリア最大手。",
+    strengthLine: "Salesforce導入200社、定着率95%",
+    representativeName: "梅田 直也",
     serviceCategories: ["sales_strengthening", "dx_promotion"],
     targetIndustries: ["it", "manufacturing", "service", "wholesale"],
     targetScales: ["sme", "mid"],
@@ -291,6 +372,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.79,
     successCount: 26,
     totalOffers: 33,
+    serviceMaterialUrl: "#material-s014",
+    websiteUrl: "https://example.com/salesvanish",
+    isActive: true,
+    signupDate: "2024-01-18",
     createdAt: "2024-01-18T00:00:00Z",
   },
   {
@@ -303,6 +388,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     prefecture: "東京都",
     description:
       "スタートアップ法務・IPO準備支援。シリーズA〜上場前まで一気通貫対応。",
+    strengthLine: "IPO準備フェーズの法務支援30社実績",
+    representativeName: "南野 早苗",
     serviceCategories: ["legal_compliance", "finance_funding"],
     targetIndustries: ["it", "service"],
     targetScales: ["micro", "small", "sme"],
@@ -312,6 +399,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.6,
     successCount: 11,
     totalOffers: 19,
+    serviceMaterialUrl: "#material-s015",
+    websiteUrl: "https://example.com/matters",
+    isActive: true,
+    signupDate: "2024-03-08",
     createdAt: "2024-03-08T00:00:00Z",
   },
   {
@@ -323,6 +414,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "京都府",
     description: "リファラル採用・ATS導入支援。関西エリアの中堅企業に強み。",
+    strengthLine: "リファラル採用比率を平均35%まで引き上げ",
+    representativeName: "上田 麻衣",
     serviceCategories: ["hr_recruitment", "hr_retention"],
     targetIndustries: ["service", "manufacturing", "retail", "medical"],
     targetScales: ["sme", "mid"],
@@ -332,6 +425,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.73,
     successCount: 15,
     totalOffers: 22,
+    serviceMaterialUrl: "#material-s016",
+    websiteUrl: "https://example.com/harmony-hr",
+    isActive: true,
+    signupDate: "2024-02-15",
     createdAt: "2024-02-15T00:00:00Z",
   },
   {
@@ -343,6 +440,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "東京都",
     description: "UI/UXデザイン・コーポレートサイト制作。BtoBスタートアップ実績多数。",
+    strengthLine: "BtoB SaaSのUX改善でCV率2-3倍を実現",
+    representativeName: "井上 哲也",
     serviceCategories: ["marketing"],
     targetIndustries: ["it", "service"],
     targetScales: ["micro", "small", "sme"],
@@ -352,6 +451,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.65,
     successCount: 13,
     totalOffers: 22,
+    serviceMaterialUrl: "#material-s017",
+    websiteUrl: "https://example.com/designraft",
+    isActive: true,
+    signupDate: "2024-03-20",
     createdAt: "2024-03-20T00:00:00Z",
   },
   {
@@ -363,6 +466,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "sme",
     prefecture: "大阪府",
     description: "物流業界向けシステム開発・WMS導入。倉庫管理DXに圧倒的実績。",
+    strengthLine: "WMS導入で倉庫作業効率40%改善の実績多数",
+    representativeName: "野口 達也",
     serviceCategories: ["dx_promotion", "it_infrastructure"],
     targetIndustries: ["logistics", "wholesale", "manufacturing"],
     targetScales: ["sme", "mid", "large"],
@@ -372,6 +477,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.58,
     successCount: 16,
     totalOffers: 27,
+    serviceMaterialUrl: "#material-s018",
+    websiteUrl: "https://example.com/logitech-jp",
+    isActive: true,
+    signupDate: "2024-01-22",
     createdAt: "2024-01-22T00:00:00Z",
   },
   {
@@ -383,6 +492,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "東京都",
     description: "通信費・電力料金見直しコンサル。固定費削減1000社実績。",
+    strengthLine: "固定費削減を完全成果報酬で提供",
+    representativeName: "本田 慎也",
     serviceCategories: ["cost_reduction"],
     targetIndustries: ["retail", "service", "manufacturing", "medical"],
     targetScales: ["small", "sme", "mid"],
@@ -392,6 +503,10 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.88,
     successCount: 30,
     totalOffers: 35,
+    serviceMaterialUrl: "#material-s019",
+    websiteUrl: "https://example.com/zeroout",
+    isActive: true,
+    signupDate: "2024-02-08",
     createdAt: "2024-02-08T00:00:00Z",
   },
   {
@@ -403,6 +518,8 @@ export const DUMMY_SUPPLIERS: Company[] = [
     employeeScale: "small",
     prefecture: "兵庫県",
     description: "リーダー育成研修・1on1コーチング。製造業の管理職育成に定評。",
+    strengthLine: "製造業管理職向け研修プログラム60社導入",
+    representativeName: "桑田 由香",
     serviceCategories: ["hr_retention", "management_consulting"],
     targetIndustries: ["manufacturing", "construction", "service"],
     targetScales: ["sme", "mid"],
@@ -412,10 +529,19 @@ export const DUMMY_SUPPLIERS: Company[] = [
     responseRate: 0.69,
     successCount: 14,
     totalOffers: 22,
+    serviceMaterialUrl: "#material-s020",
+    websiteUrl: "https://example.com/hitoichi",
+    isActive: true,
+    signupDate: "2024-03-05",
     createdAt: "2024-03-05T00:00:00Z",
   },
 ];
 
 export function findSupplierById(id: string): Company | undefined {
   return DUMMY_SUPPLIERS.find((s) => s.id === id);
+}
+
+// 有効な支援先のみ抽出(レコメンドで使用)
+export function activeSuppliers(): Company[] {
+  return DUMMY_SUPPLIERS.filter((s) => s.isActive !== false);
 }

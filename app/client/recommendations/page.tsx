@@ -9,8 +9,10 @@ import { Progress } from "@/components/ui/progress";
 import { useQuestionnaireStore } from "@/lib/store/questionnaire-store";
 import { DUMMY_SUPPLIERS } from "@/lib/dummy-data/suppliers";
 import { DUMMY_CLIENTS } from "@/lib/dummy-data/clients";
+import { useSupplierStatusStore } from "@/lib/store/supplier-status-store";
 import {
   rankSuppliers,
+  buildMatchReasons,
   type ScoredSupplier,
 } from "@/lib/matching/score-calculator";
 import {
@@ -20,26 +22,26 @@ import {
   type ChallengeCategory,
 } from "@/types";
 import { useScoringStore } from "@/lib/store/scoring-store";
+import { useLikeStore } from "@/lib/store/like-store";
+import { MOCK_CLIENT } from "@/lib/auth/mock-user";
 import { cn } from "@/lib/utils";
-
-type Action = "liked" | "super_liked" | null;
 
 export default function RecommendationsPage() {
   const router = useRouter();
   const { answers } = useQuestionnaireStore();
   const scoring = useScoringStore();
+  const likeStore = useLikeStore();
+  const statusOverrides = useSupplierStatusStore((s) => s.overrides);
   const [hydrated, setHydrated] = useState(false);
-  const [actions, setActions] = useState<Record<string, Action>>({});
   const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
   }, []);
 
-  // ハイドレート前は表示しない
-  // クライアントが直接 /client/recommendations を訪問してもデモが動くよう、
-  // アンケート未入力時は「c001(サンライト精機)」をデフォルトに。
+  // アンケート未入力時はデフォルトクライアント(c001)の課題で表示
   const fallback = DUMMY_CLIENTS[0];
+
   const ranked: ScoredSupplier[] = useMemo(() => {
     if (!hydrated) return [];
     const criteria = {
@@ -51,14 +53,25 @@ export default function RecommendationsPage() {
         []) as ChallengeCategory[],
       budget: (answers.budget ?? fallback.budget)!,
     };
-    return rankSuppliers(criteria, DUMMY_SUPPLIERS, {
+    const active = DUMMY_SUPPLIERS.filter((s) => {
+      const override = statusOverrides[s.id];
+      const isActive = override ?? s.isActive ?? true;
+      return isActive;
+    });
+    return rankSuppliers(criteria, active, {
       threshold: scoring.recommendThreshold,
-      limit: 5,
+      limit: 10, // Top10表示(③要件)
       weights: { tag: scoring.tagWeight, success: scoring.successWeight },
     });
-  }, [hydrated, answers, scoring, fallback]);
+  }, [hydrated, answers, scoring, fallback, statusOverrides]);
 
-  const selectedCount = Object.values(actions).filter(Boolean).length;
+  // LIKE状態(永続化 store から取得)
+  const clientLikes = hydrated ? likeStore.getForClient(MOCK_CLIENT.id) : [];
+  const likeMap: Record<string, "liked" | "super_liked"> = {};
+  clientLikes.forEach((r) => {
+    likeMap[r.supplierId] = r.action;
+  });
+  const selectedCount = clientLikes.length;
 
   if (!hydrated) {
     return (
@@ -66,11 +79,33 @@ export default function RecommendationsPage() {
     );
   }
 
+  const criteria = {
+    industry: (answers.industry ?? fallback.industry)!,
+    employeeScale: (answers.employeeScale ?? fallback.employeeScale)!,
+    prefecture: (answers.prefecture ?? fallback.prefecture)!,
+    challenges: ((answers.challenges as ChallengeCategory[]) ??
+      fallback.challenges ??
+      []) as ChallengeCategory[],
+    budget: (answers.budget ?? fallback.budget)!,
+  };
+
   const handleConfirm = () => {
     setConfirming(true);
     setTimeout(() => {
       router.push("/client/dashboard?matched=true");
     }, 1200);
+  };
+
+  const toggle = (
+    supplierId: string,
+    action: "liked" | "super_liked",
+  ) => {
+    const current = likeMap[supplierId];
+    likeStore.setLike(
+      MOCK_CLIENT.id,
+      supplierId,
+      current === action ? null : action,
+    );
   };
 
   return (
@@ -81,7 +116,7 @@ export default function RecommendationsPage() {
             AIマッチング結果
           </p>
           <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-navy-900">
-            あなたの課題に合う支援先 {ranked.length}社
+            あなたの課題に合う支援先 上位{ranked.length}社
           </h1>
           <p className="mt-1 text-sm text-navy-900/60">
             5軸スコアリング(業種・規模・課題・地域・予算)+ 過去実績で算出
@@ -101,18 +136,14 @@ export default function RecommendationsPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
-          {ranked.map((scored) => (
+          {ranked.map((scored, idx) => (
             <SupplierCard
               key={scored.supplier.id}
+              rank={idx + 1}
               scored={scored}
-              action={actions[scored.supplier.id] ?? null}
-              onAction={(action) =>
-                setActions((prev) => ({
-                  ...prev,
-                  [scored.supplier.id]:
-                    prev[scored.supplier.id] === action ? null : action,
-                }))
-              }
+              reasons={buildMatchReasons(criteria, scored.supplier, scored.breakdown)}
+              action={likeMap[scored.supplier.id] ?? null}
+              onAction={(a) => toggle(scored.supplier.id, a)}
             />
           ))}
         </div>
@@ -132,7 +163,7 @@ export default function RecommendationsPage() {
               >
                 {selectedCount}
               </span>{" "}
-              <span className="text-navy-900/50">/ 3 件選ぶとマッチング確定</span>
+              <span className="text-navy-900/50">/ 3件選ぶとマッチング確定</span>
             </p>
           </div>
           <Button
@@ -146,20 +177,23 @@ export default function RecommendationsPage() {
         </div>
       </div>
 
-      {/* 確定バー分の余白 */}
       <div className="h-24" />
     </div>
   );
 }
 
 function SupplierCard({
+  rank,
   scored,
+  reasons,
   action,
   onAction,
 }: {
+  rank: number;
   scored: ScoredSupplier;
-  action: Action;
-  onAction: (action: Action) => void;
+  reasons: string[];
+  action: "liked" | "super_liked" | null;
+  onAction: (action: "liked" | "super_liked") => void;
 }) {
   const { supplier, matchScore, breakdown } = scored;
   const high = supplier.meetingPriority === "high";
@@ -175,15 +209,20 @@ function SupplierCard({
     >
       <CardContent className="flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="min-w-0">
-            <h3 className="font-semibold text-navy-900 leading-tight">
-              {supplier.name}
-            </h3>
-            <p className="mt-0.5 text-xs text-navy-900/60">
-              {INDUSTRY_LABELS[supplier.industry]} ・{" "}
-              {EMPLOYEE_SCALE_LABELS[supplier.employeeScale]} ・{" "}
-              {supplier.prefecture}
-            </p>
+          <div className="min-w-0 flex items-start gap-2">
+            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-navy text-white text-xs font-bold">
+              {rank}
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-semibold text-navy-900 leading-tight">
+                {supplier.name}
+              </h3>
+              <p className="mt-0.5 text-xs text-navy-900/60">
+                {INDUSTRY_LABELS[supplier.industry]} ・{" "}
+                {EMPLOYEE_SCALE_LABELS[supplier.employeeScale]} ・{" "}
+                {supplier.prefecture}
+              </p>
+            </div>
           </div>
           <div className="text-right shrink-0">
             <div className="text-xs text-navy-900/50">マッチスコア</div>
@@ -212,9 +251,32 @@ function SupplierCard({
           <TagDot label="予算" matched={breakdown.budget} />
         </div>
 
-        <p className="mt-4 text-sm text-navy-900/80 leading-relaxed line-clamp-3">
-          {supplier.description}
-        </p>
+        {supplier.strengthLine && (
+          <p className="mt-4 rounded-lg bg-aqua-50 border border-aqua-100 px-3 py-2 text-xs text-navy-900/80">
+            <span className="font-semibold text-aqua-700">強み:</span>{" "}
+            {supplier.strengthLine}
+          </p>
+        )}
+
+        {/* マッチ理由 — デモのキーポイント */}
+        {reasons.length > 0 && (
+          <div className="mt-3">
+            <p className="text-xs font-semibold text-navy-900/70 mb-1">
+              なぜこの会社か(AI判定)
+            </p>
+            <ul className="space-y-1">
+              {reasons.map((r) => (
+                <li
+                  key={r}
+                  className="flex items-start gap-1.5 text-xs text-navy-900/80"
+                >
+                  <span className="text-success mt-0.5">✓</span>
+                  <span>{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {supplier.serviceCategories?.map((c) => (
@@ -224,10 +286,38 @@ function SupplierCard({
           ))}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {veteran && <Badge variant="navy">実績豊富 (成約{supplier.successCount}件)</Badge>}
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {veteran && (
+            <Badge variant="navy">
+              実績豊富 (成約{supplier.successCount}件)
+            </Badge>
+          )}
           {high && <Badge variant="success">積極対応</Badge>}
         </div>
+
+        {/* サービス資料・URL(⑦要件) */}
+        {(supplier.serviceMaterialUrl || supplier.websiteUrl) && (
+          <div className="mt-3 flex flex-wrap gap-3 text-xs">
+            {supplier.serviceMaterialUrl && (
+              <a
+                href={supplier.serviceMaterialUrl}
+                onClick={(e) => e.preventDefault()}
+                className="inline-flex items-center gap-1 text-aqua-700 hover:underline"
+              >
+                📄 サービス資料を見る
+              </a>
+            )}
+            {supplier.websiteUrl && (
+              <a
+                href={supplier.websiteUrl}
+                onClick={(e) => e.preventDefault()}
+                className="inline-flex items-center gap-1 text-aqua-700 hover:underline"
+              >
+                🌐 公式サイト
+              </a>
+            )}
+          </div>
+        )}
 
         <div className="mt-auto pt-5 grid grid-cols-2 gap-2">
           <Button

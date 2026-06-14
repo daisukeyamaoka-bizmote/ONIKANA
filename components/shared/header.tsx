@@ -32,11 +32,14 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
             { href: "/supplier/dashboard", label: "ダッシュボード" },
             { href: "/supplier/offers", label: "打診一覧" },
             { href: "/supplier/meetings", label: "商談" },
+            { href: "/supplier/profile", label: "プロフィール" },
+            { href: "/supplier/signup", label: "会員登録(プレビュー)" },
           ]
         : [
             { href: "/admin/dashboard", label: "KPI" },
             { href: "/admin/companies", label: "企業" },
             { href: "/admin/matches", label: "マッチング" },
+            { href: "/admin/likes", label: "LIKE" },
             { href: "/admin/scoring", label: "スコアリング" },
           ];
 
