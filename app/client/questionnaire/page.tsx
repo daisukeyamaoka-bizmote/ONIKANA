@@ -15,6 +15,8 @@ import { Progress } from "@/components/ui/progress";
 import { useQuestionnaireStore } from "@/lib/store/questionnaire-store";
 import {
   INDUSTRY_LABELS,
+  INDUSTRY_DETAIL_TO_CATEGORY,
+  INDUSTRY_DETAIL_OPTIONS,
   EMPLOYEE_SCALE_LABELS,
   CHALLENGE_LABELS,
   BUDGET_LABELS,
@@ -83,12 +85,12 @@ export default function QuestionnairePage() {
           <CardTitle>
             {step === 1 && "Step 1: 基本情報"}
             {step === 2 && "Step 2: 課題と予算"}
-            {step === 3 && "Step 3: 詳細・ご連絡先"}
+            {step === 3 && "Step 3: 紹介資料・URL"}
           </CardTitle>
           <CardDescription>
-            {step === 1 && "貴社の基本情報を教えてください。"}
+            {step === 1 && "貴社・ご担当者の情報を教えてください。"}
             {step === 2 && "抱えている課題と希望される予算感を教えてください。"}
-            {step === 3 && "貴社の紹介資料やURLをご提供ください(AIがマッチングに活用します)。"}
+            {step === 3 && "資料・URLは任意。AIが内容を読み取りマッチング精度を高めます。"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -130,13 +132,23 @@ export default function QuestionnairePage() {
 // バリデーション(必須項目チェック)
 function isStepValid(step: number, a: Record<string, unknown>): boolean {
   if (step === 1) {
-    return Boolean(a.industry && a.employeeScale && a.prefecture);
+    return Boolean(
+      a.companyName &&
+        a.industry &&
+        a.employeeScale &&
+        a.prefecture &&
+        a.companyWebsite &&
+        a.contactName &&
+        a.contactInfo &&
+        a.contactPhone,
+    );
   }
   if (step === 2) {
     const ch = a.challenges as ChallengeCategory[] | undefined;
     return Boolean(ch && ch.length > 0 && a.budget && a.urgency);
   }
-  return Boolean(a.contactInfo);
+  // Step 3 は任意項目のみ
+  return true;
 }
 
 function Step1({
@@ -146,51 +158,165 @@ function Step1({
   answers: Record<string, unknown>;
   setAnswers: (a: Record<string, unknown>) => void;
 }) {
+  const industryDetail =
+    (answers.industryDetail as string) ??
+    ((answers.industry as Industry | undefined)
+      ? INDUSTRY_LABELS[answers.industry as Industry]
+      : "");
+
+  const handleIndustryInput = (val: string) => {
+    // 細分カテゴリから主カテゴリを推定。リスト外なら "other" にフォールバック
+    const fromDetail = INDUSTRY_DETAIL_TO_CATEGORY[val];
+    const fromLabel = (
+      Object.entries(INDUSTRY_LABELS) as [Industry, string][]
+    ).find(([, label]) => label === val)?.[0];
+    const cat: Industry = fromDetail ?? fromLabel ?? "other";
+    setAnswers({ industry: cat, industryDetail: val });
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <Label>Q1. 業種をお選びください</Label>
-        <Select
-          value={(answers.industry as string) ?? ""}
-          onChange={(e) => setAnswers({ industry: e.target.value as Industry })}
-        >
-          <option value="">選択してください</option>
-          {Object.entries(INDUSTRY_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v}
-            </option>
-          ))}
-        </Select>
-      </div>
-      <div>
-        <Label>Q2. 従業員規模</Label>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {Object.entries(EMPLOYEE_SCALE_LABELS).map(([k, v]) => (
-            <PillOption
-              key={k}
-              selected={answers.employeeScale === k}
-              onClick={() => setAnswers({ employeeScale: k as EmployeeScale })}
-            >
-              {v}
-            </PillOption>
-          ))}
+      {/* 会社情報 */}
+      <div className="space-y-5">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-mist-500">
+          会社情報
+        </h3>
+
+        <div>
+          <Label>
+            会社名 <Req />
+          </Label>
+          <Input
+            placeholder="例: 株式会社サンライト精機"
+            value={(answers.companyName as string) ?? ""}
+            onChange={(e) => setAnswers({ companyName: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <Label>
+            業種 <Req />
+          </Label>
+          <p className="text-xs text-mist-500 mb-2">
+            候補から選択(入力で絞り込み可能)。一覧にない場合は自由記述でOK。
+          </p>
+          <Input
+            list="industry-options"
+            placeholder="入力 または 候補から選択"
+            value={industryDetail}
+            onChange={(e) => handleIndustryInput(e.target.value)}
+          />
+          <datalist id="industry-options">
+            {INDUSTRY_DETAIL_OPTIONS.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
+        </div>
+
+        <div>
+          <Label>
+            従業員規模 <Req />
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {Object.entries(EMPLOYEE_SCALE_LABELS).map(([k, v]) => (
+              <PillOption
+                key={k}
+                selected={answers.employeeScale === k}
+                onClick={() =>
+                  setAnswers({ employeeScale: k as EmployeeScale })
+                }
+              >
+                {v}
+              </PillOption>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Label>
+            所在地(都道府県)<Req />
+          </Label>
+          <Select
+            value={(answers.prefecture as string) ?? ""}
+            onChange={(e) => setAnswers({ prefecture: e.target.value })}
+          >
+            <option value="">選択してください</option>
+            {PREFECTURES.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div>
+          <Label>
+            会社ホームページ <Req />
+          </Label>
+          <Input
+            type="url"
+            placeholder="https://example.com"
+            value={(answers.companyWebsite as string) ?? ""}
+            onChange={(e) => setAnswers({ companyWebsite: e.target.value })}
+          />
         </div>
       </div>
-      <div>
-        <Label>Q3. 所在地(都道府県)</Label>
-        <Select
-          value={(answers.prefecture as string) ?? ""}
-          onChange={(e) => setAnswers({ prefecture: e.target.value })}
-        >
-          <option value="">選択してください</option>
-          {PREFECTURES.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </Select>
+
+      {/* 担当者情報 */}
+      <div className="space-y-5 pt-2 border-t border-mist-200">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-mist-500">
+          ご担当者情報
+        </h3>
+
+        <div>
+          <Label>
+            ご担当者名 <Req />
+          </Label>
+          <Input
+            placeholder="例: 山田 太郎"
+            value={(answers.contactName as string) ?? ""}
+            onChange={(e) => setAnswers({ contactName: e.target.value })}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label>
+              メールアドレス <Req />
+            </Label>
+            <Input
+              type="email"
+              placeholder="contact@example.com"
+              value={(answers.contactInfo as string) ?? ""}
+              onChange={(e) => setAnswers({ contactInfo: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>
+              電話番号 <Req />
+            </Label>
+            <Input
+              type="tel"
+              placeholder="03-0000-0000"
+              value={(answers.contactPhone as string) ?? ""}
+              onChange={(e) => setAnswers({ contactPhone: e.target.value })}
+            />
+          </div>
+        </div>
       </div>
     </div>
+  );
+}
+
+function Req() {
+  return (
+    <span
+      aria-label="必須"
+      title="必須"
+      className="ml-1 text-xs font-semibold text-ink"
+    >
+      *
+    </span>
   );
 }
 
@@ -214,7 +340,12 @@ function Step2({
   return (
     <div className="space-y-6">
       <div>
-        <Label>Q4. 抱えている課題(最大3つ・複数選択可)</Label>
+        <Label>
+          抱えている課題 <Req />
+          <span className="ml-2 text-xs font-normal text-mist-500">
+            最大3つ・複数選択可
+          </span>
+        </Label>
         <p className="text-xs text-navy-900/50 mb-3">
           現在 {challenges.length}/3 件選択中
         </p>
@@ -235,7 +366,9 @@ function Step2({
         </div>
       </div>
       <div>
-        <Label>Q5. 月次のご予算</Label>
+        <Label>
+          月次のご予算 <Req />
+        </Label>
         <div className="grid grid-cols-2 gap-2">
           {Object.entries(BUDGET_LABELS).map(([k, v]) => (
             <PillOption
@@ -249,7 +382,9 @@ function Step2({
         </div>
       </div>
       <div>
-        <Label>Q6. 導入希望時期</Label>
+        <Label>
+          導入希望時期 <Req />
+        </Label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {Object.entries(URGENCY_LABELS).map(([k, v]) => (
             <PillOption
@@ -309,7 +444,10 @@ function Step3({
       </div>
 
       <div>
-        <Label>Q7. 会社紹介・サービス紹介資料(任意)</Label>
+        <Label>
+          会社紹介・サービス紹介資料
+          <span className="ml-2 text-xs font-normal text-mist-500">任意</span>
+        </Label>
         <label
           htmlFor="company-docs"
           className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-mist-300 bg-paper px-4 py-8 cursor-pointer hover:bg-mist-50 transition"
@@ -352,7 +490,10 @@ function Step3({
       </div>
 
       <div>
-        <Label>Q8. コーポレートサイト / サービス紹介ページURL(任意)</Label>
+        <Label>
+          コーポレートサイト / サービス紹介ページURL
+          <span className="ml-2 text-xs font-normal text-mist-500">任意</span>
+        </Label>
         <p className="text-xs text-mist-500 mb-2">
           複数追加可能です。
         </p>
@@ -384,16 +525,6 @@ function Step3({
         >
           + URLを追加
         </button>
-      </div>
-
-      <div>
-        <Label>Q9. 連絡先メールアドレス</Label>
-        <Input
-          type="email"
-          placeholder="contact@example.com"
-          value={(answers.contactInfo as string) ?? ""}
-          onChange={(e) => setAnswers({ contactInfo: e.target.value })}
-        />
       </div>
     </div>
   );

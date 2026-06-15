@@ -82,21 +82,28 @@ export interface Company {
 }
 
 export interface QuestionnaireAnswers {
-  industry: Industry;
+  // 会社情報(Step 1・必須)
+  companyName: string;
+  industry: Industry;            // 主カテゴリ(マッチング判定に使用)
+  industryDetail?: string;       // ユーザーが入力した細分業種(表示用)
   employeeScale: EmployeeScale;
   prefecture: string;
+  companyWebsite: string;
+  // 担当者情報(Step 1・必須)
+  contactName: string;
+  contactInfo: string;           // メールアドレス
+  contactPhone: string;
+  // 課題・予算(Step 2)
   challenges: ChallengeCategory[];
   budget: BudgetRange;
   urgency: Urgency;
-  targetRole: MeetingTargetRole;
-  // 旧Q8/Q9のフリーテキスト。後方互換のため残置(UIからは表示しない)
+  // 詳細(Step 3・任意)
+  companyDocumentNames?: string[];
+  companyUrls?: string[];
+  // 後方互換(UIから削除済みのフィールド)
+  targetRole?: MeetingTargetRole;
   backgroundText?: string;
   desiredSupportText?: string;
-  // 新Q8: 会社紹介・サービス紹介資料(ファイル名のみ保持。実体はストレージへ)
-  companyDocumentNames?: string[];
-  // 新Q9: コーポレート/サービスサイトURL(複数可)。AIで後から内容を読み取る前提
-  companyUrls?: string[];
-  contactInfo: string;
 }
 
 export interface Questionnaire {
@@ -293,3 +300,72 @@ export const BUDGET_TO_AMOUNT: Record<BudgetRange, number> = {
   budget_50k_100k: 750000,
   budget_over_100k: 1500000,
 };
+
+// 業種の細分カテゴリ(検索可能リスト)
+// 入力された値はマッチング判定用に Industry(主カテゴリ)へマップされる
+export const INDUSTRY_DETAIL_TO_CATEGORY: Record<string, Industry> = {
+  // 製造業
+  "自動車・部品": "manufacturing",
+  "電機・電子機器": "manufacturing",
+  "機械・産業機器": "manufacturing",
+  "食品・飲料": "manufacturing",
+  "化学・素材": "manufacturing",
+  "医薬品・バイオ": "manufacturing",
+  "紙・パッケージ": "manufacturing",
+  "繊維・アパレル製造": "manufacturing",
+  // IT
+  "SaaS・クラウド": "it",
+  "受託開発・SIer": "it",
+  "Web・アプリ制作": "it",
+  "セキュリティ": "it",
+  "AI・機械学習": "it",
+  "ハードウェア・IoT": "it",
+  // 小売
+  "食品スーパー・量販": "retail",
+  "アパレル・雑貨": "retail",
+  "EC・通販": "retail",
+  "専門店・小売": "retail",
+  // サービス
+  "飲食・レストラン": "service",
+  "宿泊・ホテル": "service",
+  "美容・サロン": "service",
+  "フィットネス・健康": "service",
+  "広告・PR": "service",
+  "教育・スクール": "service",
+  "コンサルティング": "service",
+  "人材紹介・派遣": "service",
+  "デザイン・クリエイティブ": "service",
+  // 建設
+  "総合建設(ゼネコン)": "construction",
+  "建築・住宅": "construction",
+  "土木・インフラ": "construction",
+  "設備工事": "construction",
+  // 不動産
+  "不動産売買": "realestate",
+  "不動産賃貸・管理": "realestate",
+  "デベロッパー": "realestate",
+  // 医療・介護
+  "クリニック・診療所": "medical",
+  "病院": "medical",
+  "介護・福祉": "medical",
+  "医療機器・製薬": "medical",
+  // 金融
+  "銀行・信金": "finance",
+  "保険": "finance",
+  "証券・運用": "finance",
+  "リース・カード": "finance",
+  // 物流
+  "物流・運送": "logistics",
+  "倉庫": "logistics",
+  "海運・空運": "logistics",
+  // 卸売
+  "卸売・問屋": "wholesale",
+  "総合商社・専門商社": "wholesale",
+  // その他
+  "農林水産": "other",
+  "その他": "other",
+};
+
+export const INDUSTRY_DETAIL_OPTIONS = Object.keys(
+  INDUSTRY_DETAIL_TO_CATEGORY,
+);
