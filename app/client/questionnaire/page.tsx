@@ -19,14 +19,12 @@ import {
   CHALLENGE_LABELS,
   BUDGET_LABELS,
   URGENCY_LABELS,
-  ROLE_LABELS,
   PREFECTURES,
   type Industry,
   type EmployeeScale,
   type ChallengeCategory,
   type BudgetRange,
   type Urgency,
-  type MeetingTargetRole,
 } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -136,9 +134,7 @@ function isStepValid(step: number, a: Record<string, unknown>): boolean {
   }
   if (step === 2) {
     const ch = a.challenges as ChallengeCategory[] | undefined;
-    return Boolean(
-      ch && ch.length > 0 && a.budget && a.urgency && a.targetRole,
-    );
+    return Boolean(ch && ch.length > 0 && a.budget && a.urgency);
   }
   return Boolean(a.contactInfo);
 }
@@ -266,24 +262,6 @@ function Step2({
           ))}
         </div>
       </div>
-      <div>
-        <Label>Q7. 商談したい相手の役職</Label>
-        <p className="text-xs text-mist-500 mb-3">
-          マッチング対象の支援先絞り込みに使用します。
-        </p>
-        <div className="grid grid-cols-1 gap-2">
-          {(Object.keys(ROLE_LABELS) as MeetingTargetRole[]).map((role) => (
-            <PillOption
-              key={role}
-              selected={answers.targetRole === role}
-              onClick={() => setAnswers({ targetRole: role })}
-              fullWidth
-            >
-              {ROLE_LABELS[role]}
-            </PillOption>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -331,7 +309,7 @@ function Step3({
       </div>
 
       <div>
-        <Label>Q8. 会社紹介・サービス紹介資料(任意)</Label>
+        <Label>Q7. 会社紹介・サービス紹介資料(任意)</Label>
         <label
           htmlFor="company-docs"
           className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-mist-300 bg-paper px-4 py-8 cursor-pointer hover:bg-mist-50 transition"
@@ -374,7 +352,7 @@ function Step3({
       </div>
 
       <div>
-        <Label>Q9. コーポレートサイト / サービス紹介ページURL(任意)</Label>
+        <Label>Q8. コーポレートサイト / サービス紹介ページURL(任意)</Label>
         <p className="text-xs text-mist-500 mb-2">
           複数追加可能です。
         </p>
@@ -409,7 +387,7 @@ function Step3({
       </div>
 
       <div>
-        <Label>Q10. 連絡先メールアドレス</Label>
+        <Label>Q9. 連絡先メールアドレス</Label>
         <Input
           type="email"
           placeholder="contact@example.com"
