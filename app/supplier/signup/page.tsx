@@ -31,7 +31,9 @@ export default function SupplierSignupPage() {
       <div className="max-w-2xl mx-auto py-10 text-center">
         <Card>
           <CardContent className="py-12">
-            <div className="text-5xl mb-3">📨</div>
+            <div className="mb-3 text-xs font-semibold tracking-widest text-mist-500 uppercase">
+              Application Received
+            </div>
             <h1 className="text-2xl font-bold text-navy-900">
               申請を受け付けました
             </h1>

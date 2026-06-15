@@ -33,11 +33,14 @@ import {
   Legend,
 } from "recharts";
 
+// モノクロ統一: 役職を濃淡で識別
 const ROLE_COLORS: Record<MeetingTargetRole, string> = {
-  staff: "#2E86AB",
-  manager: "#1F4E79",
-  executive: "#ED7D31",
+  staff: "#A3A3A3",      // mist-400
+  manager: "#525252",    // mist-600
+  executive: "#0F0F0F",  // ink
 };
+const CHART_INK = "#0F0F0F";
+const CHART_GRID = "#E5E5E5";
 
 const MONTHLY_TREND = [
   { month: "11月", count: 78, revenue: 4200000 },
@@ -152,21 +155,21 @@ export default function AdminDashboard() {
             <div className="h-64 -mx-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={MONTHLY_TREND}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="month" stroke="#6B7280" fontSize={12} />
-                  <YAxis stroke="#6B7280" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+                  <XAxis dataKey="month" stroke="#737373" fontSize={12} />
+                  <YAxis stroke="#737373" fontSize={12} />
                   <Tooltip
                     contentStyle={{
                       borderRadius: 8,
-                      border: "1px solid #E5E7EB",
+                      border: "1px solid #E5E5E5",
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="count"
-                    stroke="#1F4E79"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: "#2E86AB" }}
+                    stroke={CHART_INK}
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: CHART_INK }}
                     name="商談件数"
                   />
                 </LineChart>
@@ -201,7 +204,7 @@ export default function AdminDashboard() {
                   <Tooltip
                     contentStyle={{
                       borderRadius: 8,
-                      border: "1px solid #E5E7EB",
+                      border: "1px solid #E5E5E5",
                     }}
                   />
                   <Legend
@@ -225,24 +228,24 @@ export default function AdminDashboard() {
             <div className="h-72 -mx-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={categoryDist} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis type="number" stroke="#6B7280" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+                  <XAxis type="number" stroke="#737373" fontSize={12} />
                   <YAxis
                     dataKey="name"
                     type="category"
                     width={100}
-                    stroke="#6B7280"
+                    stroke="#737373"
                     fontSize={12}
                   />
                   <Tooltip
                     contentStyle={{
                       borderRadius: 8,
-                      border: "1px solid #E5E7EB",
+                      border: "1px solid #E5E5E5",
                     }}
                   />
                   <Bar
                     dataKey="count"
-                    fill="#2E86AB"
+                    fill={CHART_INK}
                     radius={[0, 4, 4, 0]}
                     name="件数"
                   />
@@ -284,25 +287,81 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-navy text-white p-6">
-        <p className="text-xs uppercase tracking-widest text-aqua-100/80">
+      <div className="mt-5">
+        <Card>
+          <CardContent>
+            <h2 className="text-lg font-semibold text-navy-900 mb-1">
+              支援先別 月次請求額(課金対象)
+            </h2>
+            <p className="text-xs text-navy-900/60 mb-4">
+              アポを獲得した支援先に対する月次請求金額です。クライアントは無料利用。
+            </p>
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs text-navy-900/60 border-b border-mist-200">
+                <tr>
+                  <th className="py-2 font-medium">支援先</th>
+                  <th className="py-2 font-medium text-right">商談件数</th>
+                  <th className="py-2 font-medium text-right">請求額</th>
+                  <th className="py-2 font-medium text-right">bizmote手数料(5%)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-mist-100">
+                {(() => {
+                  const map = new Map<string, { count: number; total: number }>();
+                  completed.forEach((m) => {
+                    const prev = map.get(m.supplierId) ?? { count: 0, total: 0 };
+                    prev.count += 1;
+                    prev.total += m.meetingPrice ?? 0;
+                    map.set(m.supplierId, prev);
+                  });
+                  const rows = Array.from(map.entries())
+                    .map(([sid, v]) => ({
+                      supplier: findSupplierById(sid),
+                      ...v,
+                    }))
+                    .filter((r) => r.supplier)
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 8);
+                  return rows.map((r) => (
+                    <tr key={r.supplier!.id}>
+                      <td className="py-2 text-navy-900">{r.supplier!.name}</td>
+                      <td className="py-2 text-right text-navy-900/80 num-emphasis">
+                        {r.count}件
+                      </td>
+                      <td className="py-2 text-right num-emphasis font-semibold text-navy-900">
+                        {formatYen(r.total)}
+                      </td>
+                      <td className="py-2 text-right num-emphasis text-navy-900/70">
+                        {formatYen(Math.floor(r.total * 0.05))}
+                      </td>
+                    </tr>
+                  ));
+                })()}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8 rounded-2xl bg-ink text-paper p-6">
+        <p className="text-xs uppercase tracking-widest text-paper/60">
           月次サマリー
         </p>
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <p className="text-xs text-white/60">オニカナ売上</p>
+            <p className="text-xs text-paper/60">オニカナ売上(支援先請求額合計)</p>
             <p className="num-emphasis text-3xl font-bold">
               {formatYen(totalRevenue)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-white/60">bizmote 成果報酬</p>
-            <p className="num-emphasis text-3xl font-bold text-supplier">
+            <p className="text-xs text-paper/60">bizmote 成果報酬(5%)</p>
+            <p className="num-emphasis text-3xl font-bold">
               {formatYen(bizmoteFee)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-white/60">完了商談数</p>
+            <p className="text-xs text-paper/60">完了商談数</p>
             <p className="num-emphasis text-3xl font-bold">
               {formatNumber(completed.length)}件
             </p>

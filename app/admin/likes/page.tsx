@@ -90,8 +90,8 @@ export default function AdminLikesPage() {
                         variant={r.action === "super_liked" ? "red" : "pink"}
                       >
                         {r.action === "super_liked"
-                          ? "★ぜひ話したい"
-                          : "♡気になる"}
+                          ? "ぜひ話したい"
+                          : "気になる"}
                       </Badge>
                     </li>
                   );
@@ -136,7 +136,9 @@ export default function AdminLikesPage() {
                               }
                             >
                               {s?.name ?? r.supplierId}
-                              {r.action === "super_liked" ? " ★" : " ♡"}
+                              {r.action === "super_liked"
+                                ? " ・ぜひ話したい"
+                                : " ・気になる"}
                             </Badge>
                           );
                         })}

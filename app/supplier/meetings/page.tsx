@@ -96,8 +96,8 @@ export default function SupplierMeetingsPage() {
                   </Button>
                 )}
                 {completed && (
-                  <p className="mt-3 text-xs text-success">
-                    ✓ 商談実施済み
+                  <p className="mt-3 text-xs font-semibold text-ink">
+                    商談実施済み
                   </p>
                 )}
               </CardContent>

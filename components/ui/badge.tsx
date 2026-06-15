@@ -2,22 +2,23 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
+// モノクロ統一のバッジ。塗り強度と枠線で階層を表現。
 const badgeVariants = cva(
   "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
   {
     variants: {
       variant: {
-        default: "bg-navy-50 text-navy-900",
-        navy: "bg-navy text-white",
-        aqua: "bg-aqua text-white",
-        supplier: "bg-supplier text-white",
-        success: "bg-success/10 text-success",
-        warn: "bg-yellow-100 text-yellow-800",
-        danger: "bg-danger/10 text-danger",
-        outline: "border border-navy/20 text-navy-900",
-        muted: "bg-gray-100 text-gray-700",
-        pink: "bg-pink-100 text-pink-700",
-        red: "bg-red-100 text-red-700",
+        default: "bg-mist-100 text-ink",
+        navy: "bg-ink text-paper",
+        aqua: "bg-mist-700 text-paper",
+        supplier: "bg-ink text-paper",
+        success: "bg-mist-200 text-ink font-semibold",
+        warn: "bg-mist-100 text-ink border border-mist-300",
+        danger: "bg-paper text-ink border border-ink font-semibold",
+        outline: "border border-mist-300 text-ink bg-paper",
+        muted: "bg-mist-100 text-mist-500",
+        pink: "bg-mist-200 text-ink",
+        red: "bg-ink text-paper",
       },
     },
     defaultVariants: {

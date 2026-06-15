@@ -58,6 +58,13 @@ export default function QuestionnairePage() {
 
   return (
     <div className="mx-auto max-w-3xl">
+      <div className="mb-4 rounded-lg border border-mist-300 bg-paper px-4 py-2 text-xs text-mist-600 flex items-center justify-between">
+        <span>
+          <span className="font-semibold text-ink">クライアント企業のご利用は完全無料</span>
+          {" 　"}所要時間 約3分
+        </span>
+        <span className="text-mist-500">課金対象は支援先のみ</span>
+      </div>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium text-navy-900/60">
@@ -264,7 +271,7 @@ function Step2({
       <div>
         <Label>Q7. 商談したい相手の役職</Label>
         <p className="text-xs text-navy-900/50 mb-3">
-          ※商談単価は役職に応じて変動します
+          貴社のご利用は完全無料です。表示の金額は支援先がアポ獲得時にオニカナへ支払う単価です。
         </p>
         <div className="grid grid-cols-1 gap-2">
           {(Object.keys(ROLE_LABELS) as MeetingTargetRole[]).map((role) => (
@@ -276,7 +283,9 @@ function Step2({
             >
               <div className="flex items-center justify-between w-full">
                 <span>{ROLE_LABELS[role]}</span>
-                <Badge variant="aqua">{formatYen(ROLE_PRICES[role])}</Badge>
+                <span className="text-xs text-mist-500">
+                  支援先単価 {formatYen(ROLE_PRICES[role])}
+                </span>
               </div>
             </PillOption>
           ))}

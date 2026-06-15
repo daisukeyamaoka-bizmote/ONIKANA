@@ -101,7 +101,7 @@ export default function SupplierOffersPage() {
                           : "AIレコメンド"}
                       </Badge>
                       {m.status === "super_liked" && (
-                        <Badge variant="red">★ 最有力</Badge>
+                        <Badge variant="red">最有力</Badge>
                       )}
                     </div>
                   </div>

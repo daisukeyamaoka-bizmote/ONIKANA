@@ -155,23 +155,43 @@ export default function OfferDetailPage() {
             <h3 className="text-sm font-semibold text-navy-900 mb-2">
               会社の状況
             </h3>
-            <p className="text-sm text-navy-900/80 leading-relaxed bg-navy-50 rounded-lg p-4">
+            <p className="text-sm text-navy-900/80 leading-relaxed bg-mist-50 rounded-lg p-4">
               {client.description}
             </p>
           </div>
 
+          {/* アポ単価の明示(支援先課金モデル) */}
+          <div className="mt-8 rounded-xl border-2 border-ink p-5">
+            <p className="text-xs uppercase tracking-widest text-mist-500">
+              この案件のアポ単価
+            </p>
+            <div className="mt-1 flex items-end justify-between gap-3">
+              <div>
+                <p className="num-emphasis text-4xl font-bold text-ink">
+                  {formatYen(match.meetingPrice ?? 0)}
+                </p>
+                <p className="text-xs text-mist-600 mt-1">
+                  商談相手: {ROLE_LABELS[match.targetRole]} ・ 商談1時間の実施時に発生
+                </p>
+              </div>
+              <p className="text-xs text-mist-500 max-w-[160px] text-right">
+                承諾後、日程確定+商談実施でオニカナへの請求が確定します
+              </p>
+            </div>
+          </div>
+
           {status === "accepted" || status === "matched" ? (
-            <div className="mt-8 rounded-xl bg-success/10 border border-success/30 p-4 text-center text-sm text-success">
-              ✓ 承諾済みです。商談スケジュールから日程提案ができます。
+            <div className="mt-6 rounded-xl bg-mist-100 border border-mist-300 p-4 text-center text-sm text-ink">
+              承諾済みです。商談スケジュールから日程提案ができます。
             </div>
           ) : status === "rejected" ? (
-            <div className="mt-8 rounded-xl bg-gray-100 border border-gray-200 p-4 text-center text-sm text-gray-600">
+            <div className="mt-6 rounded-xl bg-mist-100 border border-mist-200 p-4 text-center text-sm text-mist-500">
               辞退済みです。
             </div>
           ) : (
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Button variant="success" size="lg" onClick={handleAccept}>
-                承諾する
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button variant="primary" size="lg" onClick={handleAccept}>
+                {formatYen(match.meetingPrice ?? 0)} で承諾する
               </Button>
               <Button
                 variant="outline"
@@ -271,12 +291,12 @@ function TagItem({ label, matched }: { label: string; matched: boolean }) {
       className={cn(
         "rounded-lg border px-2 py-3 text-center",
         matched
-          ? "border-success/30 bg-success/5 text-success"
-          : "border-gray-200 bg-gray-50 text-gray-400",
+          ? "border-ink bg-ink text-paper"
+          : "border-mist-200 bg-paper text-mist-400",
       )}
     >
       <p className="text-xs">{label}</p>
-      <p className="text-lg font-bold">{matched ? "◎" : "△"}</p>
+      <p className="text-xs font-semibold mt-1">{matched ? "適合" : "—"}</p>
     </div>
   );
 }

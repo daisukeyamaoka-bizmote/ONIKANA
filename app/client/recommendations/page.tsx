@@ -202,9 +202,9 @@ function SupplierCard({
   return (
     <Card
       className={cn(
-        "flex flex-col h-full transition",
-        action === "super_liked" && "ring-2 ring-red-500",
-        action === "liked" && "ring-2 ring-pink-400",
+        "flex flex-col h-full transition border",
+        action === "super_liked" && "ring-2 ring-ink ring-offset-1",
+        action === "liked" && "ring-2 ring-mist-400 ring-offset-1",
       )}
     >
       <CardContent className="flex flex-col flex-1">
@@ -268,9 +268,9 @@ function SupplierCard({
               {reasons.map((r) => (
                 <li
                   key={r}
-                  className="flex items-start gap-1.5 text-xs text-navy-900/80"
+                  className="flex items-start gap-2 text-xs text-navy-900/80"
                 >
-                  <span className="text-success mt-0.5">✓</span>
+                  <span className="mt-1.5 inline-block h-1 w-1 shrink-0 rounded-full bg-ink" />
                   <span>{r}</span>
                 </li>
               ))}
@@ -302,18 +302,18 @@ function SupplierCard({
               <a
                 href={supplier.serviceMaterialUrl}
                 onClick={(e) => e.preventDefault()}
-                className="inline-flex items-center gap-1 text-aqua-700 hover:underline"
+                className="text-ink hover:underline underline-offset-2"
               >
-                📄 サービス資料を見る
+                サービス資料
               </a>
             )}
             {supplier.websiteUrl && (
               <a
                 href={supplier.websiteUrl}
                 onClick={(e) => e.preventDefault()}
-                className="inline-flex items-center gap-1 text-aqua-700 hover:underline"
+                className="text-ink hover:underline underline-offset-2"
               >
-                🌐 公式サイト
+                公式サイト
               </a>
             )}
           </div>
@@ -324,13 +324,13 @@ function SupplierCard({
             variant={action === "liked" ? "like" : "likeIdle"}
             onClick={() => onAction("liked")}
           >
-            ♡ 気になる
+            気になる
           </Button>
           <Button
             variant={action === "super_liked" ? "superLike" : "superLikeIdle"}
             onClick={() => onAction("super_liked")}
           >
-            ★ ぜひ話したい
+            ぜひ話したい
           </Button>
         </div>
       </CardContent>
@@ -342,18 +342,14 @@ function TagDot({ label, matched }: { label: string; matched: boolean }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs",
-        matched ? "bg-success/10 text-success" : "bg-gray-100 text-gray-500",
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs border",
+        matched
+          ? "bg-ink text-paper border-ink"
+          : "bg-paper text-mist-400 border-mist-200",
       )}
     >
-      <span
-        className={cn(
-          "h-1.5 w-1.5 rounded-full",
-          matched ? "bg-success" : "bg-gray-400",
-        )}
-      />
-      {label}
-      {matched ? "◎" : "△"}
+      <span>{label}</span>
+      <span className="opacity-70">{matched ? "適合" : "—"}</span>
     </span>
   );
 }

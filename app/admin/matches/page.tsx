@@ -82,7 +82,7 @@ export default function AdminMatchesPage() {
   };
 
   const arrow = (key: SortKey) =>
-    sortKey === key ? (sortDir === "desc" ? " ▼" : " ▲") : "";
+    sortKey === key ? (sortDir === "desc" ? " (降順)" : " (昇順)") : "";
 
   return (
     <div>
@@ -112,7 +112,7 @@ export default function AdminMatchesPage() {
           onClick={() => setSortDir(sortDir === "desc" ? "asc" : "desc")}
           className="rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-sm hover:bg-navy-50"
         >
-          {sortDir === "desc" ? "降順 ▼" : "昇順 ▲"}
+          {sortDir === "desc" ? "降順" : "昇順"}
         </button>
       </div>
 
@@ -245,10 +245,10 @@ export default function AdminMatchesPage() {
                     マッチング詳細
                   </h3>
                   <button
-                    className="text-navy-900/60 hover:text-navy-900"
+                    className="text-navy-900/60 hover:text-navy-900 text-xl leading-none"
                     onClick={() => setSelected(null)}
                   >
-                    ✕
+                    ×
                   </button>
                 </div>
                 <dl className="grid grid-cols-2 gap-3 text-sm">

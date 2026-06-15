@@ -38,7 +38,7 @@ export function DemoResetButton({
 
   return (
     <Button variant={variant} onClick={reset} size="sm" className={className}>
-      {done ? "✓ リセット完了" : "🔄 デモデータをリセット"}
+      {done ? "リセット完了" : "デモデータをリセット"}
     </Button>
   );
 }

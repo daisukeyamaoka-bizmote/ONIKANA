@@ -124,8 +124,8 @@ export default function ClientMeetingsPage() {
                   </Button>
                 )}
                 {completed && (
-                  <p className="mt-3 text-xs text-success">
-                    ✓ 商談実施済み(売上計上)
+                  <p className="mt-3 text-xs font-semibold text-ink">
+                    商談実施済み(売上計上)
                   </p>
                 )}
               </CardContent>

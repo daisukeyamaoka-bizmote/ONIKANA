@@ -71,7 +71,7 @@ export default function ClientDashboard() {
           </p>
         </div>
         <Link href="/client/questionnaire">
-          <Button variant="secondary">＋ 新しいマッチングを探す</Button>
+          <Button variant="primary">新しいマッチングを探す</Button>
         </Link>
       </div>
 

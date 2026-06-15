@@ -16,14 +16,14 @@ export function Progress({
   return (
     <div
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-navy-100",
+        "relative h-2 w-full overflow-hidden rounded-full bg-mist-100",
         className,
       )}
       {...props}
     >
       <div
         className={cn(
-          "h-full bg-aqua transition-all duration-500",
+          "h-full bg-ink transition-all duration-500",
           indicatorClassName,
         )}
         style={{ width: `${clamped}%` }}

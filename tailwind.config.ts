@@ -1,5 +1,27 @@
 import type { Config } from "tailwindcss";
 
+// モノクロ3色パレット
+// - ink (黒)  : テキスト、プライマリボタン、強調
+// - paper (白): 背景、コントラスト
+// - mist (灰) : セカンダリ、ボーダー、ミュート
+// 既存クラス名(navy / aqua / supplier / success / danger / bg)は
+// 互換のためモノクロにマップしてあります。
+
+const ink = "#0F0F0F";
+const paper = "#FFFFFF";
+const mist = {
+  50: "#FAFAFA",
+  100: "#F5F5F5",
+  200: "#E5E5E5",
+  300: "#D4D4D4",
+  400: "#A3A3A3",
+  500: "#737373",
+  600: "#525252",
+  700: "#404040",
+  800: "#262626",
+  900: "#171717",
+};
+
 const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,33 +30,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ONIKANA カラーパレット
+        ink,
+        paper,
+        mist,
+        // 互換エイリアス: 既存コードを壊さないため
         navy: {
-          DEFAULT: "#1F4E79",
-          50: "#EAF1F8",
-          100: "#D5E3F1",
-          200: "#A8C5E0",
-          500: "#1F4E79",
-          700: "#163958",
-          900: "#0E2438",
+          DEFAULT: ink,
+          50: mist[50],
+          100: mist[100],
+          200: mist[200],
+          500: ink,
+          700: mist[800],
+          900: ink,
         },
         aqua: {
-          DEFAULT: "#2E86AB",
-          50: "#E7F2F7",
-          100: "#CFE5EF",
-          500: "#2E86AB",
-          700: "#1F5D78",
+          DEFAULT: mist[700],
+          50: mist[100],
+          100: mist[200],
+          500: mist[700],
+          700: ink,
         },
         supplier: {
-          DEFAULT: "#ED7D31",
-          50: "#FDF1E7",
-          100: "#FBE2D0",
-          500: "#ED7D31",
-          700: "#B85A1A",
+          DEFAULT: ink,
+          50: mist[100],
+          100: mist[200],
+          500: ink,
+          700: mist[800],
         },
-        success: "#00703C",
-        danger: "#C00000",
-        bg: "#F8F9FA",
+        success: ink,
+        danger: ink,
+        bg: mist[50],
       },
       fontFamily: {
         sans: [
@@ -49,9 +74,9 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        card: "0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.04)",
+        card: "0 1px 2px 0 rgba(0,0,0,0.04)",
         "card-hover":
-          "0 4px 12px -2px rgba(31,78,121,0.12), 0 2px 4px -2px rgba(31,78,121,0.08)",
+          "0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04)",
       },
     },
   },

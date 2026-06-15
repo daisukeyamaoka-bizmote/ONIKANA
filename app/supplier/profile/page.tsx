@@ -173,9 +173,9 @@ export default function SupplierProfilePage() {
                   <a
                     href={supplier.serviceMaterialUrl}
                     onClick={(e) => e.preventDefault()}
-                    className="text-aqua-700 hover:underline inline-flex items-center gap-1"
+                    className="text-ink hover:underline underline-offset-2"
                   >
-                    📄 {supplier.serviceMaterialUrl}
+                    {supplier.serviceMaterialUrl}
                   </a>
                 ) : (
                   <p className="text-navy-900/50">未登録</p>
@@ -192,9 +192,9 @@ export default function SupplierProfilePage() {
                   <a
                     href={supplier.websiteUrl}
                     onClick={(e) => e.preventDefault()}
-                    className="text-aqua-700 hover:underline inline-flex items-center gap-1"
+                    className="text-ink hover:underline underline-offset-2"
                   >
-                    🌐 {supplier.websiteUrl}
+                    {supplier.websiteUrl}
                   </a>
                 ) : (
                   <p className="text-navy-900/50">未登録</p>

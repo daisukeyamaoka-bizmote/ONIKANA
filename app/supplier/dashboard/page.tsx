@@ -119,7 +119,7 @@ export default function SupplierDashboard() {
                           <div className="flex flex-col items-end gap-1">
                             <MatchStatusBadge status={m.status} />
                             {m.status === "super_liked" && (
-                              <Badge variant="red">★ 最有力</Badge>
+                              <Badge variant="red">最有力</Badge>
                             )}
                           </div>
                         </div>
