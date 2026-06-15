@@ -10,9 +10,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { useQuestionnaireStore } from "@/lib/store/questionnaire-store";
 import {
   INDUSTRY_LABELS,
@@ -21,7 +20,6 @@ import {
   BUDGET_LABELS,
   URGENCY_LABELS,
   ROLE_LABELS,
-  ROLE_PRICES,
   PREFECTURES,
   type Industry,
   type EmployeeScale,
@@ -30,7 +28,7 @@ import {
   type Urgency,
   type MeetingTargetRole,
 } from "@/types";
-import { formatYen, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const TOTAL_STEPS = 3;
 
@@ -92,7 +90,7 @@ export default function QuestionnairePage() {
           <CardDescription>
             {step === 1 && "貴社の基本情報を教えてください。"}
             {step === 2 && "抱えている課題と希望される予算感を教えてください。"}
-            {step === 3 && "より良いご提案のための詳細情報をお願いします。"}
+            {step === 3 && "貴社の紹介資料やURLをご提供ください(AIがマッチングに活用します)。"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -270,8 +268,8 @@ function Step2({
       </div>
       <div>
         <Label>Q7. 商談したい相手の役職</Label>
-        <p className="text-xs text-navy-900/50 mb-3">
-          貴社のご利用は完全無料です。表示の金額は支援先がアポ獲得時にオニカナへ支払う単価です。
+        <p className="text-xs text-mist-500 mb-3">
+          マッチング対象の支援先絞り込みに使用します。
         </p>
         <div className="grid grid-cols-1 gap-2">
           {(Object.keys(ROLE_LABELS) as MeetingTargetRole[]).map((role) => (
@@ -281,12 +279,7 @@ function Step2({
               onClick={() => setAnswers({ targetRole: role })}
               fullWidth
             >
-              <div className="flex items-center justify-between w-full">
-                <span>{ROLE_LABELS[role]}</span>
-                <span className="text-xs text-mist-500">
-                  支援先単価 {formatYen(ROLE_PRICES[role])}
-                </span>
-              </div>
+              {ROLE_LABELS[role]}
             </PillOption>
           ))}
         </div>
@@ -302,26 +295,119 @@ function Step3({
   answers: Record<string, unknown>;
   setAnswers: (a: Record<string, unknown>) => void;
 }) {
+  // 添付ファイル(名称のみ保持。実体はストレージへ送る想定)
+  const docs = (answers.companyDocumentNames as string[]) ?? [];
+  // 関連URL(複数可)
+  const urls = (answers.companyUrls as string[]) ?? [""];
+
+  const handleFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const names = Array.from(files).map((f) => f.name);
+    setAnswers({ companyDocumentNames: [...docs, ...names] });
+  };
+
+  const removeDoc = (idx: number) =>
+    setAnswers({
+      companyDocumentNames: docs.filter((_, i) => i !== idx),
+    });
+
+  const setUrl = (idx: number, value: string) => {
+    const next = [...urls];
+    next[idx] = value;
+    setAnswers({ companyUrls: next });
+  };
+
+  const addUrl = () => setAnswers({ companyUrls: [...urls, ""] });
+
+  const removeUrl = (idx: number) =>
+    setAnswers({ companyUrls: urls.filter((_, i) => i !== idx) });
+
   return (
     <div className="space-y-6">
-      <div>
-        <Label>Q8. 会社の背景(任意・約200文字)</Label>
-        <Textarea
-          placeholder="例: 創業20年の精密部品メーカーです。近年は新規事業として...."
-          maxLength={300}
-          value={(answers.backgroundText as string) ?? ""}
-          onChange={(e) => setAnswers({ backgroundText: e.target.value })}
-        />
+      <div className="rounded-lg border border-mist-200 bg-mist-50 px-4 py-3 text-xs text-mist-600 leading-relaxed">
+        文章でご記入いただく代わりに、貴社の<span className="font-semibold text-ink">会社紹介資料・サービス紹介資料</span>を添付するか、<span className="font-semibold text-ink">サイトURL</span>をご記入ください。
+        いただいた情報はAIが内容を読み取り、より精度の高いマッチングに活用します。
+        <span className="text-mist-500">(資料・URL欄はどちらも任意。片方だけでも構いません)</span>
       </div>
+
       <div>
-        <Label>Q9. 希望する支援内容(任意・約200文字)</Label>
-        <Textarea
-          placeholder="例: 半年以内にエンジニアを5名採用したく、スカウト代行と..."
-          maxLength={300}
-          value={(answers.desiredSupportText as string) ?? ""}
-          onChange={(e) => setAnswers({ desiredSupportText: e.target.value })}
-        />
+        <Label>Q8. 会社紹介・サービス紹介資料(任意)</Label>
+        <label
+          htmlFor="company-docs"
+          className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-mist-300 bg-paper px-4 py-8 cursor-pointer hover:bg-mist-50 transition"
+        >
+          <p className="text-sm font-medium text-ink">
+            クリックしてファイルを選択
+          </p>
+          <p className="text-xs text-mist-500 mt-1">
+            PDF / PowerPoint / 画像 (複数選択可)
+          </p>
+          <input
+            id="company-docs"
+            type="file"
+            multiple
+            accept=".pdf,.ppt,.pptx,.png,.jpg,.jpeg"
+            className="hidden"
+            onChange={(e) => handleFiles(e.target.files)}
+          />
+        </label>
+        {docs.length > 0 && (
+          <ul className="mt-3 space-y-1.5">
+            {docs.map((name, i) => (
+              <li
+                key={`${name}-${i}`}
+                className="flex items-center justify-between rounded border border-mist-200 bg-paper px-3 py-2 text-sm"
+              >
+                <span className="truncate text-ink">{name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeDoc(i)}
+                  aria-label="削除"
+                  className="ml-2 text-mist-500 hover:text-ink text-lg leading-none"
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+
+      <div>
+        <Label>Q9. コーポレートサイト / サービス紹介ページURL(任意)</Label>
+        <p className="text-xs text-mist-500 mb-2">
+          複数追加可能です。
+        </p>
+        <div className="space-y-2">
+          {urls.map((url, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                type="url"
+                placeholder="https://example.com"
+                value={url}
+                onChange={(e) => setUrl(i, e.target.value)}
+              />
+              {urls.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeUrl(i)}
+                  className="shrink-0 rounded-lg border border-mist-200 px-3 text-sm text-mist-500 hover:bg-mist-50"
+                >
+                  削除
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={addUrl}
+          className="mt-2 text-xs text-ink hover:underline underline-offset-2"
+        >
+          + URLを追加
+        </button>
+      </div>
+
       <div>
         <Label>Q10. 連絡先メールアドレス</Label>
         <Input

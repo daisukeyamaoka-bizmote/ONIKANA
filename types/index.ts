@@ -89,8 +89,13 @@ export interface QuestionnaireAnswers {
   budget: BudgetRange;
   urgency: Urgency;
   targetRole: MeetingTargetRole;
-  backgroundText: string;
-  desiredSupportText: string;
+  // 旧Q8/Q9のフリーテキスト。後方互換のため残置(UIからは表示しない)
+  backgroundText?: string;
+  desiredSupportText?: string;
+  // 新Q8: 会社紹介・サービス紹介資料(ファイル名のみ保持。実体はストレージへ)
+  companyDocumentNames?: string[];
+  // 新Q9: コーポレート/サービスサイトURL(複数可)。AIで後から内容を読み取る前提
+  companyUrls?: string[];
   contactInfo: string;
 }
 
