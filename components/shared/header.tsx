@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/shared/notification-bell";
 
 interface HeaderProps {
   variant?: "client" | "supplier" | "admin";
@@ -26,15 +27,16 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
           { href: "/client/dashboard", label: "ダッシュボード" },
           { href: "/client/recommendations", label: "レコメンド" },
           { href: "/client/matches", label: "マッチング" },
+          { href: "/client/messages", label: "メッセージ" },
           { href: "/client/meetings", label: "商談" },
         ]
       : variant === "supplier"
         ? [
             { href: "/supplier/dashboard", label: "ダッシュボード" },
             { href: "/supplier/offers", label: "打診一覧" },
+            { href: "/supplier/messages", label: "メッセージ" },
             { href: "/supplier/meetings", label: "商談" },
             { href: "/supplier/profile", label: "プロフィール" },
-            { href: "/supplier/signup", label: "会員登録(プレビュー)" },
           ]
         : [
             { href: "/admin/dashboard", label: "KPI" },
@@ -44,8 +46,15 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
             { href: "/admin/scoring", label: "スコアリング" },
           ];
 
+  const settingsHref =
+    variant === "client"
+      ? "/client/settings/integrations"
+      : variant === "supplier"
+        ? "/supplier/settings/integrations"
+        : null;
+
   return (
-    <header className="sticky top-0 z-30 border-b border-navy/10 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-mist-200 bg-paper/90 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
@@ -63,7 +72,7 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
             </span>
             <span className="hidden sm:inline">フクワウチ</span>
           </Link>
-          <span className="hidden md:inline text-xs text-navy-900/60 border-l border-navy/10 pl-3">
+          <span className="hidden md:inline text-xs text-mist-600 border-l border-mist-200 pl-3">
             {VARIANT_LABEL[variant]}画面
           </span>
         </div>
@@ -72,21 +81,30 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg px-3 py-1.5 text-sm text-navy-900/80 hover:bg-navy-50 hover:text-navy-900"
+              className="rounded-lg px-3 py-1.5 text-sm text-mist-700 hover:bg-mist-100 hover:text-ink"
             >
               {item.label}
             </Link>
           ))}
         </nav>
         <div className="flex items-center gap-3">
+          {variant !== "admin" && <NotificationBell perspective={variant} />}
+          {settingsHref && (
+            <Link
+              href={settingsHref}
+              className="hidden md:inline rounded-lg px-2 py-1.5 text-xs text-mist-700 hover:bg-mist-100 hover:text-ink"
+            >
+              設定
+            </Link>
+          )}
           {userLabel && (
-            <span className="text-sm text-navy-900/70 hidden sm:inline">
+            <span className="hidden sm:inline text-sm text-mist-700">
               {userLabel}
             </span>
           )}
           <div
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-full text-white text-sm font-semibold",
+              "flex h-9 w-9 items-center justify-center rounded-full text-paper text-sm font-semibold",
               VARIANT_COLOR[variant],
             )}
           >

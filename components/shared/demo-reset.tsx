@@ -7,6 +7,8 @@ import { useMatchStore } from "@/lib/store/match-store";
 import { useLikeStore } from "@/lib/store/like-store";
 import { useScoringStore } from "@/lib/store/scoring-store";
 import { useSupplierStatusStore } from "@/lib/store/supplier-status-store";
+import { useMessageStore } from "@/lib/store/message-store";
+import { useNotificationStore } from "@/lib/store/notification-store";
 
 // すべてのデモ用ストアを初期化するボタン
 // 商談前後で状態がぐちゃぐちゃになっても「リセット」一発で同じ初期状態に戻ります。
@@ -23,15 +25,23 @@ export function DemoResetButton({
   const l = useLikeStore();
   const sc = useScoringStore();
   const ss = useSupplierStatusStore();
+  const ms = useMessageStore();
+  const ns = useNotificationStore();
 
   const reset = () => {
-    if (!confirm("デモデータ(アンケート/LIKE/マッチング状態など)を初期化します。よろしいですか?"))
+    if (
+      !confirm(
+        "デモデータ(アンケート/LIKE/マッチング/メッセージ/通知設定など)を初期化します。よろしいですか?",
+      )
+    )
       return;
     q.reset();
     m.reset();
     l.reset();
     sc.reset();
     ss.reset();
+    ms.reset();
+    ns.reset();
     setDone(true);
     setTimeout(() => setDone(false), 2000);
   };

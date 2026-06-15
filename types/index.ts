@@ -369,3 +369,73 @@ export const INDUSTRY_DETAIL_TO_CATEGORY: Record<string, Industry> = {
 export const INDUSTRY_DETAIL_OPTIONS = Object.keys(
   INDUSTRY_DETAIL_TO_CATEGORY,
 );
+
+// === Phase 2: メッセージ・通知・統合 ===
+
+export type MessageType =
+  | "text"
+  | "schedule_proposal"
+  | "schedule_confirmed"
+  | "reminder"
+  | "system";
+
+export interface ScheduleSlot {
+  start: string;          // ISO datetime
+  end: string;
+  location?: string;
+}
+
+export interface Message {
+  id: string;
+  matchId: string;
+  senderType: "client" | "supplier" | "system";
+  senderName?: string;
+  type: MessageType;
+  body?: string;
+  proposedSlots?: ScheduleSlot[];
+  confirmedSlot?: ScheduleSlot;
+  // 確定時に書き込まれる(Google Calendarで生成されたイベントID — モック)
+  googleEventId?: string;
+  createdAt: string;
+  readByClient?: boolean;
+  readBySupplier?: boolean;
+}
+
+export type NotificationType =
+  | "new_message"
+  | "schedule_proposed"
+  | "schedule_confirmed"
+  | "reminder"
+  | "offer_accepted";
+
+export interface NotificationItem {
+  id: string;
+  recipientType: "client" | "supplier";
+  type: NotificationType;
+  title: string;
+  body: string;
+  linkUrl?: string;
+  channels: Array<"in_app" | "email">;
+  scheduledFor?: string;
+  sentAt?: string;
+  readAt?: string;
+}
+
+export interface UserIntegrations {
+  googleCalendarConnected: boolean;
+  googleCalendarEmail?: string;
+  primaryCalendarId?: string;
+  connectedAt?: string;
+}
+
+export interface NotificationPreferences {
+  reminderHoursBefore: number[];
+  reminderChannels: Array<"in_app" | "email">;
+  newMessageChannel: "immediate" | "daily_digest" | "off";
+}
+
+export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
+  reminderHoursBefore: [24, 1],
+  reminderChannels: ["in_app", "email"],
+  newMessageChannel: "immediate",
+};
