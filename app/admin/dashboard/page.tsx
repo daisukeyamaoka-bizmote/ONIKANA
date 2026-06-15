@@ -33,13 +33,13 @@ import {
   Legend,
 } from "recharts";
 
-// モノクロ統一: 役職を濃淡で識別
+// 3色ブランド: 役職を青(濃淡)と朱で識別
 const ROLE_COLORS: Record<MeetingTargetRole, string> = {
-  staff: "#A3A3A3",      // mist-400
-  manager: "#525252",    // mist-600
-  executive: "#0F0F0F",  // ink
+  staff: "#A1B5DF",      // oni-blue-200
+  manager: "#1E4FA3",    // oni-blue
+  executive: "#D8281D",  // oni-red
 };
-const CHART_INK = "#0F0F0F";
+const CHART_BLUE = "#1E4FA3";
 const CHART_GRID = "#E5E5E5";
 
 const MONTHLY_TREND = [
@@ -167,9 +167,9 @@ export default function AdminDashboard() {
                   <Line
                     type="monotone"
                     dataKey="count"
-                    stroke={CHART_INK}
+                    stroke={CHART_BLUE}
                     strokeWidth={2}
-                    dot={{ r: 4, fill: CHART_INK }}
+                    dot={{ r: 4, fill: CHART_BLUE }}
                     name="商談件数"
                   />
                 </LineChart>
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
                   />
                   <Bar
                     dataKey="count"
-                    fill={CHART_INK}
+                    fill={CHART_BLUE}
                     radius={[0, 4, 4, 0]}
                     name="件数"
                   />
@@ -343,25 +343,25 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-ink text-paper p-6">
-        <p className="text-xs uppercase tracking-widest text-paper/60">
+      <div className="mt-8 rounded-2xl bg-oni-blue text-paper p-6">
+        <p className="text-xs uppercase tracking-widest text-paper/70">
           月次サマリー
         </p>
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <p className="text-xs text-paper/60">オニカナ売上(支援先請求額合計)</p>
+            <p className="text-xs text-paper/70">オニカナ売上(支援先請求額合計)</p>
             <p className="num-emphasis text-3xl font-bold">
               {formatYen(totalRevenue)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-paper/60">bizmote 成果報酬(5%)</p>
-            <p className="num-emphasis text-3xl font-bold">
+            <p className="text-xs text-paper/70">bizmote 成果報酬(5%)</p>
+            <p className="num-emphasis text-3xl font-bold text-oni-red-100">
               {formatYen(bizmoteFee)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-paper/60">完了商談数</p>
+            <p className="text-xs text-paper/70">完了商談数</p>
             <p className="num-emphasis text-3xl font-bold">
               {formatNumber(completed.length)}件
             </p>

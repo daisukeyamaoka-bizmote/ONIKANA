@@ -1,14 +1,50 @@
 import type { Config } from "tailwindcss";
 
-// モノクロ3色パレット
-// - ink (黒)  : テキスト、プライマリボタン、強調
-// - paper (白): 背景、コントラスト
-// - mist (灰) : セカンダリ、ボーダー、ミュート
-// 既存クラス名(navy / aqua / supplier / success / danger / bg)は
-// 互換のためモノクロにマップしてあります。
+// フクワウチ ブランドパレット
+// オニカナのコーポレートカラー(鬼の朱・鬼の群青・福の砂色)を
+// プロダクトUI用に階調化。基本は3色+墨(ink)+紙(paper)。
+//
+//   oni-red  (朱)   : 支援先(Giver)・警告・LIKE強
+//   oni-blue (群青)  : クライアント・Primary・LIKE弱・成功
+//   fuku-sand (砂)   : 背景・アクセント面
+//   ink              : 本文文字色(墨)
+//   paper            : カード白
+//
+// 既存クラス(navy / aqua / supplier / success / danger / bg)は
+// 互換エイリアスで上記3色にマップしてあります。
 
-const ink = "#0F0F0F";
+const oniRed = "#D8281D";
+const oniRedShades = {
+  50: "#FBE9E7",
+  100: "#F7CFCB",
+  200: "#EDA199",
+  500: "#D8281D",
+  700: "#A21A12",
+  900: "#651008",
+};
+
+const oniBlue = "#1E4FA3";
+const oniBlueShades = {
+  50: "#E7EDF7",
+  100: "#C3D0EB",
+  200: "#A1B5DF",
+  500: "#1E4FA3",
+  700: "#143874",
+  900: "#0A1F45",
+};
+
+const fukuSand = "#EBE1C2";
+const fukuSandShades = {
+  50: "#FAF6E9",
+  100: "#F2EAD2",
+  200: "#EBE1C2",
+  500: "#C9B987",
+  700: "#9D8C4F",
+};
+
+const ink = "#0A0A0A";
 const paper = "#FFFFFF";
+
 const mist = {
   50: "#FAFAFA",
   100: "#F5F5F5",
@@ -30,36 +66,48 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // 新ブランドカラー(明示)
+        oni: {
+          red: { DEFAULT: oniRed, ...oniRedShades },
+          blue: { DEFAULT: oniBlue, ...oniBlueShades },
+        },
+        fuku: {
+          sand: { DEFAULT: fukuSand, ...fukuSandShades },
+        },
         ink,
         paper,
         mist,
-        // 互換エイリアス: 既存コードを壊さないため
+        // 互換エイリアス: 既存コードがそのまま動くように
+        // クライアント側 / Primary action → 群青(blue)
         navy: {
-          DEFAULT: ink,
-          50: mist[50],
-          100: mist[100],
-          200: mist[200],
-          500: ink,
-          700: mist[800],
-          900: ink,
+          DEFAULT: oniBlue,
+          50: oniBlueShades[50],
+          100: oniBlueShades[100],
+          200: oniBlueShades[200],
+          500: oniBlueShades[500],
+          700: oniBlueShades[700],
+          900: oniBlueShades[900],
         },
+        // セカンダリも青系
         aqua: {
-          DEFAULT: mist[700],
-          50: mist[100],
-          100: mist[200],
-          500: mist[700],
-          700: ink,
+          DEFAULT: "#3A6FBC",
+          50: oniBlueShades[50],
+          100: oniBlueShades[100],
+          500: "#3A6FBC",
+          700: oniBlue,
         },
+        // 支援先(Giver)アイデンティティ → 朱(red)
         supplier: {
-          DEFAULT: ink,
-          50: mist[100],
-          100: mist[200],
-          500: ink,
-          700: mist[800],
+          DEFAULT: oniRed,
+          50: oniRedShades[50],
+          100: oniRedShades[100],
+          500: oniRedShades[500],
+          700: oniRedShades[700],
         },
-        success: ink,
-        danger: ink,
-        bg: mist[50],
+        success: oniBlue,
+        danger: oniRed,
+        // ページ全体の背景は薄い砂色
+        bg: fukuSandShades[50],
       },
       fontFamily: {
         sans: [
@@ -74,9 +122,9 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        card: "0 1px 2px 0 rgba(0,0,0,0.04)",
+        card: "0 1px 2px 0 rgba(10,10,10,0.04)",
         "card-hover":
-          "0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04)",
+          "0 4px 12px -2px rgba(10,10,10,0.08), 0 2px 4px -2px rgba(10,10,10,0.04)",
       },
     },
   },

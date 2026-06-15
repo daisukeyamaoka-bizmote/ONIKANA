@@ -8,29 +8,29 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // 第一階層: 黒で塗ったボタン
-        primary: "bg-ink text-paper hover:bg-mist-800 shadow-card",
-        // セカンダリも黒系で統一(過去のaquaを置き換え)
-        secondary: "bg-mist-700 text-paper hover:bg-ink shadow-card",
-        // 支援先専用色も黒に統一
-        supplier: "bg-ink text-paper hover:bg-mist-800 shadow-card",
-        // 成功系は太字+黒
-        success: "bg-ink text-paper hover:bg-mist-800 font-semibold shadow-card",
-        // 危険操作はアウトライン+太字で表現
+        // 第一階層: 群青塗り(Primary action)
+        primary: "bg-oni-blue text-paper hover:bg-oni-blue-700 shadow-card",
+        // セカンダリ: 群青の中間
+        secondary: "bg-aqua text-paper hover:bg-oni-blue shadow-card",
+        // 支援先(Giver)アイデンティティ: 朱塗り
+        supplier: "bg-oni-red text-paper hover:bg-oni-red-700 shadow-card",
+        // 成功(完了・承諾):群青
+        success: "bg-oni-blue text-paper hover:bg-oni-blue-700 font-semibold shadow-card",
+        // 危険操作:朱の枠線(色は使う、面積は最小に)
         danger:
-          "bg-paper text-ink border border-ink hover:bg-mist-100 font-semibold",
+          "bg-paper text-oni-red border border-oni-red hover:bg-oni-red-50 font-semibold",
         outline:
           "border border-mist-300 bg-paper text-ink hover:bg-mist-100",
         ghost: "text-ink hover:bg-mist-100",
-        // 「気になる」: 通常は枠線、選択時はグレー塗り
-        like: "bg-mist-200 text-ink border border-ink/0 font-semibold",
+        // 気になる(興味のシグナル): 群青のサブトル
+        like: "bg-oni-blue-50 text-oni-blue-700 border border-oni-blue font-semibold",
         likeIdle:
-          "bg-paper border border-mist-300 text-ink hover:bg-mist-50 hover:border-mist-400",
-        // 「ぜひ話したい」: 選択時は黒塗り
+          "bg-paper border border-mist-300 text-ink hover:bg-oni-blue-50 hover:border-oni-blue-200",
+        // ぜひ話したい(熱意のシグナル): 朱の塗り
         superLike:
-          "bg-ink text-paper border border-ink font-semibold",
+          "bg-oni-red text-paper border border-oni-red font-semibold",
         superLikeIdle:
-          "bg-paper border border-mist-300 text-ink hover:bg-mist-50 hover:border-ink",
+          "bg-paper border border-mist-300 text-ink hover:bg-oni-red-50 hover:border-oni-red-200",
       },
       size: {
         sm: "h-8 px-3 text-sm",

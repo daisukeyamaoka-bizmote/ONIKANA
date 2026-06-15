@@ -12,10 +12,11 @@ const VARIANT_LABEL: Record<NonNullable<HeaderProps["variant"]>, string> = {
   admin: "管理者",
 };
 
+// ロール識別カラー: クライアント=群青、支援先=朱、管理者=墨
 const VARIANT_COLOR: Record<NonNullable<HeaderProps["variant"]>, string> = {
-  client: "bg-aqua",
-  supplier: "bg-supplier",
-  admin: "bg-navy-700",
+  client: "bg-oni-blue",
+  supplier: "bg-oni-red",
+  admin: "bg-ink",
 };
 
 export function Header({ variant = "client", userLabel }: HeaderProps) {
@@ -49,17 +50,18 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold tracking-wider text-navy-900"
+            className="flex items-center gap-2 font-bold tracking-wider text-ink"
           >
             <span
               className={cn(
-                "inline-flex h-8 w-8 items-center justify-center rounded-md text-white text-sm",
+                "inline-flex h-8 w-8 items-center justify-center rounded-md text-paper text-base",
                 VARIANT_COLOR[variant],
               )}
+              aria-hidden
             >
-              O
+              福
             </span>
-            <span className="hidden sm:inline">ONIKANA</span>
+            <span className="hidden sm:inline">フクワウチ</span>
           </Link>
           <span className="hidden md:inline text-xs text-navy-900/60 border-l border-navy/10 pl-3">
             {VARIANT_LABEL[variant]}画面

@@ -4,17 +4,21 @@ import { DemoResetButton } from "@/components/shared/demo-reset";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-fuku-sand-50">
       <main className="container-page flex flex-col items-center pt-16 pb-16 sm:pt-24">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-mist-200 bg-paper px-3 py-1 text-xs text-mist-600">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-ink" />
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-oni-red" />
           AIマッチング × 商談セッティング
         </div>
         <h1 className="text-center text-5xl sm:text-6xl font-bold tracking-tight text-ink">
-          ONIKANA
+          <span className="text-oni-red">フク</span>
+          <span className="text-oni-blue">ワウチ</span>
         </h1>
-        <p className="mt-3 text-center text-base text-mist-600">
-          企業と企業を、最適につなぐ。
+        <p className="mt-3 text-center text-base text-mist-700">
+          福を、企業へ。
+        </p>
+        <p className="mt-1 text-xs text-mist-500">
+          Powered by 株式会社オニカナ
         </p>
 
         <p className="mt-8 text-center text-sm text-mist-600 max-w-2xl">
@@ -26,6 +30,7 @@ export default function HomePage() {
           <RoleCard
             href="/client/questionnaire"
             tag="クライアントとして見る"
+            tagAccent="oni-blue"
             title="支援を受けたい企業"
             description="アンケート → AIレコメンド10社 → 気になる / ぜひ話したい を操作。利用は完全無料。"
             cta="クライアント画面へ"
@@ -37,6 +42,7 @@ export default function HomePage() {
           <RoleCard
             href="/supplier/dashboard"
             tag="支援先(Giver)として見る"
+            tagAccent="oni-red"
             title="支援を提供する企業"
             description="打診一覧 → アポ単価を確認して承諾 → 日程提案。プロフィール編集も可能。"
             cta="支援先画面へ"
@@ -48,6 +54,7 @@ export default function HomePage() {
           <RoleCard
             href="/admin/dashboard"
             tag="管理者として見る"
+            tagAccent="ink"
             title="オニカナ運営"
             description="KPI・マッチング状況・LIKE可視化・支援先別請求額・スコアリング調整。"
             cta="管理画面へ"
@@ -90,16 +97,23 @@ export default function HomePage() {
           Powered by{" "}
           <span className="font-semibold text-mist-700">bizmote</span>
           {"  ·  "}
-          <span>デモ版 v0.3</span>
+          <span>デモ版 v0.4 — フクワウチ</span>
         </footer>
       </main>
     </div>
   );
 }
 
+const TAG_CLASSES = {
+  "oni-blue": "bg-oni-blue text-paper",
+  "oni-red": "bg-oni-red text-paper",
+  ink: "bg-ink text-paper",
+} as const;
+
 function RoleCard({
   href,
   tag,
+  tagAccent,
   title,
   description,
   cta,
@@ -107,6 +121,7 @@ function RoleCard({
 }: {
   href: string;
   tag: string;
+  tagAccent: keyof typeof TAG_CLASSES;
   title: string;
   description: string;
   cta: string;
@@ -115,7 +130,9 @@ function RoleCard({
   return (
     <Card className="h-full transition hover:shadow-card-hover hover:-translate-y-0.5 border-mist-200">
       <CardContent className="flex h-full flex-col">
-        <span className="inline-flex w-fit items-center rounded-full border border-mist-300 bg-paper px-2.5 py-0.5 text-xs text-mist-600">
+        <span
+          className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${TAG_CLASSES[tagAccent]}`}
+        >
           {tag}
         </span>
         <h3 className="mt-4 text-xl font-semibold text-ink">{title}</h3>

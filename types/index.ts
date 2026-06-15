@@ -1,4 +1,4 @@
-// ONIKANA MATCHING SYSTEM - 型定義
+// フクワウチ — 型定義(運営: 株式会社オニカナ)
 // REQUIREMENTS.md セクション4 を参照
 
 export type CompanyType = "client" | "supplier";
