@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>フクワウチ 本稼働に向けた打ち合わせアジェンダ</title>
+<style>
+  :root{
+    --oni-red:#D8281D;
+    --oni-blue:#1E4FA3;
+    --fuku-sand:#EBE1C2;
+    --fuku-sand-50:#FAF6E9;
+    --ink:#0A0A0A;
+    --paper:#FFFFFF;
+    --mist-500:#737373;
+    --mist-300:#D4D4D4;
+    --mist-100:#F5F5F5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    background:#1a1a1a;color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .deck{position:relative;width:100vw;height:100vh;overflow:hidden;}
+  .slide{
+    position:absolute;inset:0;display:none;
+    flex-direction:column;justify-content:center;
+    padding:7vh 9vw;background:var(--paper);
+  }
+  .slide.active{display:flex;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* common */
+  .kicker{font-size:.85rem;letter-spacing:.28em;text-transform:uppercase;color:var(--mist-500);font-weight:600;margin-bottom:1.1rem;}
+  h1{font-size:3.2rem;line-height:1.15;font-weight:700;letter-spacing:-.01em;}
+  h2{font-size:2.1rem;line-height:1.25;font-weight:700;margin-bottom:.4rem;}
+  .lead{font-size:1.15rem;color:var(--mist-500);margin-top:.8rem;line-height:1.7;}
+  .bartop{height:6px;width:64px;border-radius:3px;background:var(--oni-red);margin-bottom:2rem;}
+  .bartop.blue{background:var(--oni-blue);}
+
+  /* footer / nav */
+  .foot{position:absolute;bottom:3vh;left:9vw;right:9vw;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--mist-500);}
+  .brand-mini{display:flex;align-items:center;gap:.5rem;font-weight:700;color:var(--ink);}
+  .brand-mini .mark{display:inline-flex;width:22px;height:22px;border-radius:5px;background:var(--oni-red);color:#fff;align-items:center;justify-content:center;font-size:.7rem;}
+  .pageno{font-variant-numeric:tabular-nums;}
+
+  /* cover */
+  .cover{background:linear-gradient(160deg,var(--fuku-sand-50) 0%,#fff 55%);}
+  .cover .logo{font-size:4.4rem;font-weight:800;letter-spacing:-.02em;}
+  .cover .logo .a{color:var(--oni-red);} .cover .logo .b{color:var(--oni-blue);}
+  .cover .tag{font-size:1.2rem;color:var(--mist-500);margin-top:.4rem;}
+  .cover .meta{margin-top:3rem;font-size:.95rem;color:var(--mist-500);line-height:1.9;}
+  .pill{display:inline-block;border:1px solid var(--mist-300);border-radius:999px;padding:.3rem .9rem;font-size:.8rem;color:var(--mist-500);margin-bottom:1.6rem;}
+
+  /* grid of categories */
+  .catgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.6rem;}
+  .cat{border:1px solid var(--mist-300);border-radius:14px;padding:1.1rem 1.3rem;display:flex;gap:1rem;align-items:flex-start;}
+  .cat .n{flex:none;width:34px;height:34px;border-radius:9px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;}
+  .cat.red .n{background:var(--oni-red);} .cat.blue .n{background:var(--oni-blue);}
+  .cat h3{font-size:1.05rem;font-weight:700;}
+  .cat p{font-size:.82rem;color:var(--mist-500);margin-top:.2rem;line-height:1.5;}
+
+  /* decision slide */
+  .deciden{display:flex;flex-direction:column;}
+  .qlist{margin-top:1.4rem;display:flex;flex-direction:column;gap:.95rem;}
+  .q{display:flex;gap:1rem;align-items:flex-start;border-left:3px solid var(--oni-red);padding:.2rem 0 .2rem 1.1rem;}
+  .q.blue{border-color:var(--oni-blue);}
+  .q .qn{flex:none;font-weight:700;font-size:.9rem;color:var(--mist-500);min-width:1.6rem;font-variant-numeric:tabular-nums;}
+  .q .qt{font-size:1.08rem;line-height:1.5;}
+  .q .qt .opt{display:block;font-size:.85rem;color:var(--mist-500);margin-top:.25rem;}
+  .tagrow{margin-top:1.3rem;}
+  .tag-chip{display:inline-block;background:var(--fuku-sand);color:var(--ink);border-radius:999px;padding:.25rem .8rem;font-size:.78rem;font-weight:600;margin-right:.5rem;}
+
+  /* status / timeline */
+  .steps{margin-top:1.6rem;display:flex;flex-direction:column;gap:.8rem;}
+  .step{display:flex;gap:1rem;align-items:center;}
+  .step .dot{flex:none;width:13px;height:13px;border-radius:50%;background:var(--mist-300);}
+  .step.done .dot{background:var(--oni-blue);}
+  .step.now .dot{background:var(--oni-red);box-shadow:0 0 0 5px rgba(216,40,29,.15);}
+  .step .lbl{font-size:1.05rem;}
+  .step .lbl b{font-weight:700;}
+  .step .lbl span{color:var(--mist-500);font-size:.85rem;margin-left:.5rem;}
+
+  /* cost */
+  .costwrap{margin-top:1.4rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+  .costcard{border:1px solid var(--mist-300);border-radius:16px;padding:1.5rem;}
+  .costcard .label{font-size:.85rem;color:var(--mist-500);}
+  .costcard .big{font-size:2.4rem;font-weight:800;margin-top:.3rem;font-variant-numeric:tabular-nums;}
+  .costcard .sub{font-size:.82rem;color:var(--mist-500);margin-top:.5rem;line-height:1.5;}
+  .costcard.blue{background:var(--oni-blue);color:#fff;border-color:var(--oni-blue);}
+  .costcard.blue .label,.costcard.blue .sub{color:rgba(255,255,255,.8);}
+
+  /* closing */
+  .closing{background:var(--ink);color:#fff;}
+  .closing h1{color:#fff;}
+  .closing .lead{color:rgba(255,255,255,.7);}
+  .actions{margin-top:2rem;display:flex;flex-direction:column;gap:.8rem;}
+  .action{display:flex;gap:.9rem;align-items:center;font-size:1.1rem;}
+  .action .num{flex:none;width:30px;height:30px;border-radius:8px;background:var(--oni-red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;}
+
+  /* controls */
+  .controls{position:fixed;bottom:18px;right:18px;display:flex;gap:8px;z-index:50;}
+  .controls button{border:none;background:rgba(255,255,255,.12);color:#fff;width:40px;height:40px;border-radius:10px;font-size:1.1rem;cursor:pointer;}
+  .controls button:hover{background:rgba(255,255,255,.25);}
+  .hint{position:fixed;bottom:24px;left:18px;color:rgba(255,255,255,.5);font-size:.72rem;z-index:50;}
+
+  @media print{
+    body{background:#fff;}
+    .slide{display:flex !important;position:relative;height:100vh;page-break-after:always;inset:auto;}
+    .controls,.hint{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 cover -->
+  <section class="slide cover active">
+    <div class="pill">本実装キックオフ前ミーティング ・ 2026年7月</div>
+    <div class="logo"><span class="a">フク</span><span class="b">ワウチ</span></div>
+    <div class="tag">福を、企業へ。</div>
+    <h1 style="margin-top:2.4rem;font-size:2.4rem;">本稼働に向けて<br>決めておきたいこと</h1>
+    <div class="meta">
+      株式会社オニカナ 御中(村上 様)<br>
+      bizmote株式会社 山岡 大介<br>
+      AIビジネスマッチングプラットフォーム「フクワウチ」
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">01</span></div>
+  </section>
+
+  <!-- 2 today's purpose -->
+  <section class="slide">
+    <div class="bartop"></div>
+    <div class="kicker">本日の位置づけ</div>
+    <h2>デモは無事完了。次は「本稼働の設計」を固めます。</h2>
+    <p class="lead">
+      先日のデモで、画面の方向性・体験フローはご納得いただけました。<br>
+      本日は、実際にお客様が使う「本番システム」を作り始める前に、<br>
+      <b>運用・課金・契約のルールを一緒に確定する</b>ための打ち合わせです。
+    </p>
+    <div class="tagrow">
+      <span class="tag-chip">今日のゴール = 本実装の判断材料をすべて揃える</span>
+      <span class="tag-chip">即決は不要・持ち帰り検討OK</span>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">02</span></div>
+  </section>
+
+  <!-- 3 current status -->
+  <section class="slide">
+    <div class="bartop blue"></div>
+    <div class="kicker">これまでの歩み</div>
+    <h2>現在地</h2>
+    <div class="steps">
+      <div class="step done"><span class="dot"></span><span class="lbl"><b>要件定義・MVPデモ完成</b><span>3画面・5軸AIマッチング・25画面</span></span></div>
+      <div class="step done"><span class="dot"></span><span class="lbl"><b>フクワウチへリブランド</b><span>鬼の朱・群青・福の砂色の3色</span></span></div>
+      <div class="step done"><span class="dot"></span><span class="lbl"><b>課金モデル確定</b><span>クライアント無料・支援先がアポ単価を負担</span></span></div>
+      <div class="step done"><span class="dot"></span><span class="lbl"><b>Phase 2 機能のUI完成</b><span>メッセージ・日程調整・カレンダー連携・リマインド</span></span></div>
+      <div class="step now"><span class="dot"></span><span class="lbl"><b>本日:本稼働ルールの確定</b><span>← イマココ</span></span></div>
+      <div class="step"><span class="dot"></span><span class="lbl"><b>7月〜:本実装(データ保存・ログイン・実運用)</b></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">03</span></div>
+  </section>
+
+  <!-- 4 architecture: 1 site 3 faces -->
+  <section class="slide">
+    <div class="bartop"></div>
+    <div class="kicker">システムの形(前提共有)</div>
+    <h2>「3つのサイト」ではなく「1サイト・3つの顔」</h2>
+    <p class="lead">
+      フクワウチは1つのシステム・1つのURL。<br>
+      ログインした人が誰かによって、見える画面が切り替わります(Gmailと同じ発想)。
+    </p>
+    <div class="catgrid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="cat blue"><div class="n">C</div><div><h3>クライアント</h3><p>支援を受けたい企業。無料で利用。</p></div></div>
+      <div class="cat red"><div class="n">G</div><div><h3>支援先(Giver)</h3><p>支援を提供。アポ単価を負担。</p></div></div>
+      <div class="cat"><div class="n">A</div><div><h3>管理者</h3><p>オニカナ社内。全体を管理。</p></div></div>
+    </div>
+    <div class="tagrow">
+      <span class="tag-chip">作るのは1つ・保守も1つ・費用も1つ分(月1万円以内)</span>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">04</span></div>
+  </section>
+
+  <!-- 5 agenda overview -->
+  <section class="slide">
+    <div class="bartop blue"></div>
+    <div class="kicker">本日決めたいこと</div>
+    <h2>7つのテーマ</h2>
+    <div class="catgrid">
+      <div class="cat red"><div class="n">1</div><div><h3>課金・契約</h3><p>成果報酬率・入金定義・契約締結</p></div></div>
+      <div class="cat blue"><div class="n">2</div><div><h3>データ・オペレーション</h3><p>1,200社データ・役職判定・審査</p></div></div>
+      <div class="cat red"><div class="n">3</div><div><h3>課金ルールの細部</h3><p>キャンセル時・請求サイクル</p></div></div>
+      <div class="cat blue"><div class="n">4</div><div><h3>機能・仕様</h3><p>メッセージ開通・カレンダー・通知</p></div></div>
+      <div class="cat red"><div class="n">5</div><div><h3>マルチユーザー</h3><p>部署別・メンバー招待</p></div></div>
+      <div class="cat blue"><div class="n">6</div><div><h3>法務・コンプラ</h3><p>規約・個人情報・特商法</p></div></div>
+    </div>
+    <div class="tagrow"><span class="tag-chip">＋ 7. GTM・運用(本稼働の判断基準・移行目標)</span></div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">05</span></div>
+  </section>
+
+  <!-- 6 theme1 -->
+  <section class="slide deciden">
+    <div class="bartop"></div>
+    <div class="kicker">テーマ 1 / 7</div>
+    <h2>課金・契約(最優先)</h2>
+    <div class="qlist">
+      <div class="q"><span class="qn">1</span><span class="qt">成果報酬の最終料率<span class="opt">提案:7%(業界相場5〜15%の中間)/ 譲歩ライン 5%</span></span></div>
+      <div class="q"><span class="qn">2</span><span class="qt">「入金確定」の定義<span class="opt">商談実施時 / 月締め / オニカナへの実入金時 — どれを基準に成果発生とするか</span></span></div>
+      <div class="q"><span class="qn">3</span><span class="qt">「プラットフォーム経由」の定義<span class="opt">既存顧客がフクワウチ上で再発注した場合は料率対象に含むか</span></span></div>
+      <div class="q"><span class="qn">4</span><span class="qt">契約書の締結<span class="opt">期間 / 解約条件(60日前通知)/ 知財帰属 / エスクローオプション</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">06</span></div>
+  </section>
+
+  <!-- 7 theme2 -->
+  <section class="slide deciden">
+    <div class="bartop blue"></div>
+    <div class="kicker">テーマ 2 / 7</div>
+    <h2>データ・オペレーション</h2>
+    <div class="qlist">
+      <div class="q blue"><span class="qn">5</span><span class="qt">1,200社の実データ<span class="opt">受領形式(Excel / CRM / 名刺)と受領タイミング・どのフェーズで取り込むか</span></span></div>
+      <div class="q blue"><span class="qn">6</span><span class="qt">役職判定の根拠<span class="opt">アポ単価を決める役職は誰がいつ確認するか(名刺 / 自己申告 / オニカナ確認)</span></span></div>
+      <div class="q blue"><span class="qn">7</span><span class="qt">支援先(Giver)の審査基準<span class="opt">会員登録の承認基準(実績 / 業種 / 推薦)・誰が審査するか</span></span></div>
+      <div class="q blue"><span class="qn">8</span><span class="qt">過去の商談・売上データ<span class="opt">デモの数字を実数字に置き換えるための提供可否</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">07</span></div>
+  </section>
+
+  <!-- 8 theme3 -->
+  <section class="slide deciden">
+    <div class="bartop"></div>
+    <div class="kicker">テーマ 3 / 7</div>
+    <h2>課金ルールの細部</h2>
+    <div class="qlist">
+      <div class="q"><span class="qn">9</span><span class="qt">商談キャンセル・ノーショウ時の課金<span class="opt">当日キャンセルでアポ単価は発生するか(全額 / 半額 / なし)</span></span></div>
+      <div class="q"><span class="qn">10</span><span class="qt">アポ単価の固定/変動<span class="opt">役職別 ¥30,000 / ¥50,000 / ¥90,000 を維持するか</span></span></div>
+      <div class="q"><span class="qn">11</span><span class="qt">支援先への請求サイクル<span class="opt">都度請求 / 月次まとめ請求</span></span></div>
+    </div>
+    <div class="tagrow"><span class="tag-chip">確定済み:アポ単発のみ・予算上限なし</span></div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">08</span></div>
+  </section>
+
+  <!-- 9 theme4 -->
+  <section class="slide deciden">
+    <div class="bartop blue"></div>
+    <div class="kicker">テーマ 4 / 7</div>
+    <h2>機能・仕様の確定</h2>
+    <div class="qlist">
+      <div class="q blue"><span class="qn">12</span><span class="qt">メッセージ開通のタイミング<span class="opt">支援先の承諾後(現案)/ LIKE時点 / マッチング確定時</span></span></div>
+      <div class="q blue"><span class="qn">13</span><span class="qt">カレンダー連携の対象<span class="opt">双方 / 支援先のみ ・ 連携は任意か必須か</span></span></div>
+      <div class="q blue"><span class="qn">14</span><span class="qt">リマインドの初期値<span class="opt">24時間前 + 1時間前(現案)で良いか</span></span></div>
+      <div class="q blue"><span class="qn">15</span><span class="qt">管理画面の権限分け<span class="opt">村上さん1人か複数社員か・権限階層の要否</span></span></div>
+      <div class="q blue"><span class="qn">16</span><span class="qt">管理画面のアクセス制限方式<span class="opt">同一サイト内制限 / 別URL化</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">09</span></div>
+  </section>
+
+  <!-- 10 theme5 -->
+  <section class="slide deciden">
+    <div class="bartop"></div>
+    <div class="kicker">テーマ 5 / 7</div>
+    <h2>マルチユーザー化(Phase 2.5)</h2>
+    <p class="lead" style="margin-top:.4rem;font-size:1rem;">1企業=複数のキーパーソンを登録し、部署別に最適な提案を届ける構想。</p>
+    <div class="qlist">
+      <div class="q"><span class="qn">17</span><span class="qt">メンバー招待フロー<span class="opt">招待メールの文面・審査の要否</span></span></div>
+      <div class="q"><span class="qn">18</span><span class="qt">部署マスタの最終確定<span class="opt">12固定リスト + 自由記述で過不足ないか</span></span></div>
+      <div class="q"><span class="qn">19</span><span class="qt">会社全体の状況をMemberにどこまで開示するか<span class="opt">他メンバーの動きの可視範囲</span></span></div>
+    </div>
+    <div class="tagrow"><span class="tag-chip">確定済み:ロール2階層(Owner / Member)・部署12固定+自由記述</span></div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">10</span></div>
+  </section>
+
+  <!-- 11 theme6 -->
+  <section class="slide deciden">
+    <div class="bartop blue"></div>
+    <div class="kicker">テーマ 6 / 7</div>
+    <h2>法務・コンプライアンス(本番公開前 必須)</h2>
+    <div class="qlist">
+      <div class="q blue"><span class="qn">20</span><span class="qt">プライバシーポリシー<span class="opt">氏名・メアド・電話など個人情報の取り扱い明示</span></span></div>
+      <div class="q blue"><span class="qn">21</span><span class="qt">特定商取引法表記<span class="opt">課金が発生するため必須</span></span></div>
+      <div class="q blue"><span class="qn">22</span><span class="qt">利用規約<span class="opt">クライアント / 支援先向け ・ 弁護士レビューの要否</span></span></div>
+      <div class="q blue"><span class="qn">23</span><span class="qt">データ保管・バックアップ方針<span class="opt">保管場所・期間・バックアップ頻度</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">11</span></div>
+  </section>
+
+  <!-- 12 theme7 -->
+  <section class="slide deciden">
+    <div class="bartop"></div>
+    <div class="kicker">テーマ 7 / 7</div>
+    <h2>GTM・運用</h2>
+    <div class="qlist">
+      <div class="q"><span class="qn">24</span><span class="qt">本稼働の判断基準<span class="opt">テスト稼働3ヶ月で何が達成されればGOか</span></span></div>
+      <div class="q"><span class="qn">25</span><span class="qt">既存案件の移行率目標<span class="opt">プラットフォーム経由をどの割合まで上げるか</span></span></div>
+      <div class="q"><span class="qn">26</span><span class="qt">Phase 2以降の優先順位<span class="opt">メッセージ / マルチユーザー / 日程調整RPA / 月次請求自動化</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">12</span></div>
+  </section>
+
+  <!-- 13 schedule -->
+  <section class="slide">
+    <div class="bartop blue"></div>
+    <div class="kicker">決定後の流れ</div>
+    <h2>本実装スケジュール(6〜8ヶ月)</h2>
+    <div class="steps">
+      <div class="step now"><span class="dot"></span><span class="lbl"><b>1ヶ月目</b><span>本日の論点確定・Supabase/認証の基盤構築</span></span></div>
+      <div class="step"><span class="dot"></span><span class="lbl"><b>2〜3ヶ月目</b><span>メッセージ・日程調整・カレンダー連携の本実装 / テスト稼働</span></span></div>
+      <div class="step"><span class="dot"></span><span class="lbl"><b>4ヶ月目</b><span>本稼働開始(既存案件の一部を経由に)</span></span></div>
+      <div class="step"><span class="dot"></span><span class="lbl"><b>5ヶ月目</b><span>本稼働定着・マルチユーザー着手</span></span></div>
+      <div class="step"><span class="dot"></span><span class="lbl"><b>6ヶ月目〜</b><span>保守運用へ移行・AI Coordinator等の拡張</span></span></div>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">13</span></div>
+  </section>
+
+  <!-- 14 cost -->
+  <section class="slide">
+    <div class="bartop"></div>
+    <div class="kicker">費用の前提(再確認)</div>
+    <h2>インフラ費用は bizmote 負担・月1万円以内</h2>
+    <div class="costwrap">
+      <div class="costcard">
+        <div class="label">パイロット期(社内確認)</div>
+        <div class="big">¥0〜3,000</div>
+        <div class="sub">無料枠で公開。クレジットカード登録も不要。</div>
+      </div>
+      <div class="costcard blue">
+        <div class="label">本番期(実運用)</div>
+        <div class="big">¥7,000〜10,000</div>
+        <div class="sub">/月 ・ Supabase等の有料プラン。数万ユーザーまでこの範囲。</div>
+      </div>
+    </div>
+    <div class="tagrow" style="margin-top:1.6rem;">
+      <span class="tag-chip">初期費用ほぼ¥0(独自ドメイン年¥3,000のみ)</span>
+      <span class="tag-chip">UI・文言・項目は公開後もいつでも変更可</span>
+    </div>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">14</span></div>
+  </section>
+
+  <!-- 15 closing -->
+  <section class="slide closing">
+    <div class="bartop"></div>
+    <div class="kicker" style="color:rgba(255,255,255,.6)">本日のゴールと次のアクション</div>
+    <h1 style="font-size:2.4rem;">論点が固まれば、<br>7月から本実装を開始できます。</h1>
+    <div class="actions">
+      <div class="action"><span class="num">1</span>テーマ1〜7のうち、その場で決められるものを確定</div>
+      <div class="action"><span class="num">2</span>持ち帰り検討が必要な項目は、次回までの宿題に</div>
+      <div class="action"><span class="num">3</span>確定分から順に、本実装の設計に着手</div>
+    </div>
+    <p class="lead" style="margin-top:2rem;">
+      即決は求めません。1週間の検討期間を取っていただいて構いません。<br>
+      まずは、優先度の高い「課金・契約」だけでも方向性をいただければ前に進められます。
+    </p>
+    <div class="foot"><span class="brand-mini"><span class="mark">福</span>フクワウチ</span><span class="pageno">15</span></div>
+  </section>
+
+</div>
+
+<div class="hint">← → / スペースキーでめくる ・ F で全画面 ・ 印刷でPDF化</div>
+<div class="controls">
+  <button onclick="prev()" aria-label="前へ">‹</button>
+  <button onclick="next()" aria-label="次へ">›</button>
+  <button onclick="toggleFs()" aria-label="全画面">⛶</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  function show(n){slides[i].classList.remove('active');i=Math.max(0,Math.min(slides.length-1,n));slides[i].classList.add('active');}
+  function next(){show(i+1);} function prev(){show(i-1);}
+  function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen();}else{document.exitFullscreen();}}
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    if(e.key.toLowerCase()==='f'){toggleFs();}
+  });
+  document.getElementById('deck').addEventListener('click',e=>{
+    if(e.target.closest('.controls'))return;
+    const x=e.clientX/window.innerWidth; if(x>0.5)next(); else prev();
+  });
+</script>
+</body>
+</html>
