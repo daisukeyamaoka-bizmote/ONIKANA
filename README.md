@@ -55,6 +55,7 @@ npm run dev
 
 ## ドキュメント
 
-- [REQUIREMENTS.md](./REQUIREMENTS.md) — 要件定義書
+- [REQUIREMENTS_v2.md](./REQUIREMENTS_v2.md) — **最新の要件定義書(v2・フクワウチ版)**
+- [REQUIREMENTS.md](./REQUIREMENTS.md) — 初版の要件定義書(v1・参考)
 - [DEMO.md](./DEMO.md) — デモ台本
 - [DEPLOY.md](./DEPLOY.md) — 公開手順
