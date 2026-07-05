@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 
 // モノクロ統一のバッジ。塗り強度と枠線で階層を表現。
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+  // ピル形をやめて小さな角(タグ的な佇まい)に
+  "inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-medium",
   {
     variants: {
       variant: {

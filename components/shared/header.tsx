@@ -54,26 +54,28 @@ export function Header({ variant = "client", userLabel }: HeaderProps) {
         : null;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-mist-200 bg-paper/90 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-30 border-b border-mist-200 bg-paper/95 backdrop-blur">
+      <div className="container-page flex h-14 items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold tracking-wider text-ink"
+            className="flex items-center gap-2.5 text-ink"
           >
             <span
               className={cn(
-                "inline-flex h-8 w-8 items-center justify-center rounded-md text-paper text-base",
+                "inline-flex h-7 w-7 items-center justify-center rounded-sm font-serif text-paper text-sm",
                 VARIANT_COLOR[variant],
               )}
               aria-hidden
             >
               福
             </span>
-            <span className="hidden sm:inline">フクワウチ</span>
+            <span className="hidden sm:inline font-serif text-base font-bold tracking-wide">
+              フクワウチ
+            </span>
           </Link>
-          <span className="hidden md:inline text-xs text-mist-600 border-l border-mist-200 pl-3">
-            {VARIANT_LABEL[variant]}画面
+          <span className="hidden md:inline border-l border-mist-200 pl-3 text-[11px] uppercase tracking-[0.2em] text-mist-500">
+            {VARIANT_LABEL[variant]}
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-1">

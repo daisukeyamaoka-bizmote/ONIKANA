@@ -120,11 +120,19 @@ const config: Config = {
           "Helvetica Neue",
           "sans-serif",
         ],
+        // 見出し用の明朝体(システムフォントのみ・外部読込なし)
+        serif: [
+          '"Shippori Mincho"',
+          '"Hiragino Mincho ProN"',
+          '"Yu Mincho"',
+          '"Noto Serif JP"',
+          "serif",
+        ],
       },
       boxShadow: {
-        card: "0 1px 2px 0 rgba(10,10,10,0.04)",
-        "card-hover":
-          "0 4px 12px -2px rgba(10,10,10,0.08), 0 2px 4px -2px rgba(10,10,10,0.04)",
+        // 編集デザイン方針: 影は基本使わない。hover時のみ極薄
+        card: "none",
+        "card-hover": "0 2px 8px -2px rgba(10,10,10,0.10)",
       },
     },
   },

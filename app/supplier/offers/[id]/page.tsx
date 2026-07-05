@@ -8,7 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { findMatchById } from "@/lib/dummy-data/matches";
 import { findClientById } from "@/lib/dummy-data/clients";
+import { findSupplierById } from "@/lib/dummy-data/suppliers";
 import { useMatchStore } from "@/lib/store/match-store";
+import { useMessageStore } from "@/lib/store/message-store";
 import {
   INDUSTRY_LABELS,
   EMPLOYEE_SCALE_LABELS,
@@ -33,6 +35,9 @@ export default function OfferDetailPage() {
   const setStatus = useMatchStore((s) => s.setStatus);
   const setProposedDates = useMatchStore((s) => s.setProposedDates);
   const overrides = useMatchStore((s) => s.overrides);
+  // 承諾・日程提案をメッセージスレッドにも連動させる
+  const sendSystemViaStore = useMessageStore((s) => s.sendText);
+  const proposeScheduleMsg = useMessageStore((s) => s.proposeSchedule);
 
   const match = findMatchById(params.id);
   const override = overrides[params.id] ?? {};
@@ -47,15 +52,24 @@ export default function OfferDetailPage() {
   }
 
   const client = findClientById(match.clientId);
-  if (!client) return null;
+  const supplier = findSupplierById(match.supplierId);
+  if (!client || !supplier) return null;
+
+  const supplierSenderName = `${supplier.name} 担当`;
 
   const handleAccept = () => {
     setStatus(match.id, "accepted");
+    // 承諾と同時にメッセージスレッドを開通させる
+    sendSystemViaStore({
+      matchId: match.id,
+      senderType: "supplier",
+      senderName: supplierSenderName,
+      body: "打診を承諾しました。日程のご相談に進みましょう。",
+    });
     setShowProposeModal(true);
   };
 
   const handleReject = (reason: string) => {
-    console.log("辞退理由:", reason);
     setStatus(match.id, "rejected");
     setShowRejectModal(false);
     router.push("/supplier/offers");
@@ -65,8 +79,22 @@ export default function OfferDetailPage() {
     const filled = proposedDates.filter(Boolean);
     if (filled.length === 0) return;
     setProposedDates(match.id, filled);
+    // メッセージスレッドにも日程提案カードとして反映
+    proposeScheduleMsg({
+      matchId: match.id,
+      senderName: supplierSenderName,
+      slots: filled.map((local) => {
+        const start = new Date(local);
+        const end = new Date(start.getTime() + 60 * 60 * 1000);
+        return {
+          start: start.toISOString(),
+          end: end.toISOString(),
+          location: "オンライン",
+        };
+      }),
+    });
     setShowProposeModal(false);
-    router.push("/supplier/meetings");
+    router.push(`/supplier/messages/${match.id}`);
   };
 
   const breakdown = match.tagBreakdown ?? {

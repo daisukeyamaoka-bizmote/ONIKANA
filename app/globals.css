@@ -8,7 +8,18 @@
   }
 
   body {
-    @apply bg-bg text-navy-900 antialiased;
+    /* 編集デザイン方針: 背景は白、砂色は面として限定的に使う */
+    @apply bg-paper text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-fuku-sand text-ink;
+  }
+
+  /* 見出しは明朝体に統一(全画面へ一括適用) */
+  h1,
+  h2 {
+    @apply font-serif;
   }
 
   /* 数字を強調表示するための共通クラス */

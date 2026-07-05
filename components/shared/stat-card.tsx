@@ -9,12 +9,13 @@ interface StatCardProps {
   accent?: "navy" | "aqua" | "supplier" | "success" | "danger";
 }
 
-const ACCENT_BG: Record<NonNullable<StatCardProps["accent"]>, string> = {
-  navy: "bg-navy",
-  aqua: "bg-aqua",
-  supplier: "bg-supplier",
-  success: "bg-success",
-  danger: "bg-danger",
+// 上部の色帯をやめ、数字の下に細いアクセント罫線を敷く編集的なスタイル
+const ACCENT_RULE: Record<NonNullable<StatCardProps["accent"]>, string> = {
+  navy: "bg-oni-blue",
+  aqua: "bg-oni-blue",
+  supplier: "bg-oni-red",
+  success: "bg-oni-blue",
+  danger: "bg-oni-red",
 };
 
 export function StatCard({
@@ -25,23 +26,26 @@ export function StatCard({
   accent = "navy",
 }: StatCardProps) {
   return (
-    <Card className="overflow-hidden">
-      <div className={cn("h-1", ACCENT_BG[accent])} />
-      <CardContent>
-        <p className="text-sm font-medium text-navy-900/70">{label}</p>
-        <p className="num-emphasis mt-2 text-3xl font-bold text-navy-900">
+    <Card>
+      <CardContent className="!py-5">
+        <p className="text-xs uppercase tracking-widest text-mist-500">
+          {label}
+        </p>
+        <p className="num-emphasis mt-2 text-3xl font-bold text-ink">
           {value}
         </p>
+        <div className={cn("mt-2 h-0.5 w-8", ACCENT_RULE[accent])} />
         {(hint || trend) && (
-          <p className="mt-1 text-xs text-navy-900/60 flex items-center gap-2">
+          <p className="mt-2 flex items-center gap-2 text-xs text-mist-500">
             {trend && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-0.5 font-semibold",
-                  trend.direction === "up" ? "text-success" : "text-danger",
+                  "font-semibold",
+                  trend.direction === "up" ? "text-oni-blue" : "text-oni-red",
                 )}
               >
-                {trend.direction === "up" ? "▲" : "▼"} {trend.value}
+                {trend.direction === "up" ? "+" : "-"}
+                {trend.value.replace(/^[+-]/, "")}
               </span>
             )}
             {hint && <span>{hint}</span>}

@@ -7,7 +7,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-navy-50/30">
+    <div className="min-h-screen flex flex-col bg-mist-50">
       <Header variant="admin" userLabel={`${MOCK_ADMIN.name} (${MOCK_ADMIN.role})`} />
       <main className="flex-1 container-page py-8">{children}</main>
     </div>

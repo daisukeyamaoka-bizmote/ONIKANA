@@ -11,6 +11,7 @@ import {
 import { findSupplierById } from "@/lib/dummy-data/suppliers";
 import { MOCK_CLIENT } from "@/lib/auth/mock-user";
 import { useMatchStore } from "@/lib/store/match-store";
+import { useMessageStore } from "@/lib/store/message-store";
 import { formatDateTime, formatYen } from "@/lib/utils";
 import { ROLE_LABELS } from "@/types";
 
@@ -18,6 +19,7 @@ export default function ClientMeetingsPage() {
   const overrides = useMatchStore((s) => s.overrides);
   const setCompleted = useMatchStore((s) => s.setCompleted);
   const setScheduledAt = useMatchStore((s) => s.setScheduledAt);
+  const confirmScheduleMsg = useMessageStore((s) => s.confirmSchedule);
   const [selectedDateBy, setSelectedDateBy] = useState<Record<string, string>>(
     {},
   );
@@ -105,7 +107,21 @@ export default function ClientMeetingsPage() {
                       disabled={!selectedDateBy[meeting.id]}
                       onClick={() => {
                         const chosen = selectedDateBy[meeting.id];
-                        if (chosen) setScheduledAt(match.id, chosen);
+                        if (!chosen) return;
+                        setScheduledAt(match.id, chosen);
+                        // メッセージスレッドにも確定カードを反映
+                        const start = new Date(chosen);
+                        confirmScheduleMsg({
+                          matchId: match.id,
+                          senderName: `${MOCK_CLIENT.name} 担当`,
+                          slot: {
+                            start: start.toISOString(),
+                            end: new Date(
+                              start.getTime() + 60 * 60 * 1000,
+                            ).toISOString(),
+                            location: "オンライン",
+                          },
+                        });
                       }}
                     >
                       この日時で確定

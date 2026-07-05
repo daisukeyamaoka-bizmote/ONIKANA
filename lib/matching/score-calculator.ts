@@ -84,6 +84,7 @@ export interface ScoredSupplier {
 }
 
 // 支援先1社のスコアリング
+// 重みは合計が1でなくても正規化するため、総合スコアは常に0-100に収まる
 export function scoreSupplier(
   client: ClientCriteria,
   supplier: Company,
@@ -92,8 +93,11 @@ export function scoreSupplier(
   const breakdown = calculateTagBreakdown(client, supplier);
   const tagMatchScore = calculateTagMatchScore(breakdown);
   const successRateScore = calculateSuccessRateScore(supplier);
+  const totalWeight = weights.tag + weights.success;
+  const wTag = totalWeight > 0 ? weights.tag / totalWeight : 0.5;
+  const wSuccess = totalWeight > 0 ? weights.success / totalWeight : 0.5;
   const matchScore = Math.round(
-    tagMatchScore * weights.tag + successRateScore * weights.success,
+    tagMatchScore * wTag + successRateScore * wSuccess,
   );
   return {
     supplier,
@@ -120,7 +124,13 @@ export function rankSuppliers(
   return suppliers
     .map((s) => scoreSupplier(client, s, weights))
     .filter((s) => s.matchScore >= threshold)
-    .sort((a, b) => b.matchScore - a.matchScore)
+    // 同点時も並び順が揺れないよう、実績スコア → 名前順で決定的にソート
+    .sort(
+      (a, b) =>
+        b.matchScore - a.matchScore ||
+        b.successRateScore - a.successRateScore ||
+        a.supplier.name.localeCompare(b.supplier.name, "ja"),
+    )
     .slice(0, limit);
 }
 

@@ -126,6 +126,12 @@ export const useMessageStore = create<MessageStore>()(
 
       reset: () => set({ messages: DUMMY_MESSAGES }),
     }),
-    { name: "fukuwauchi-messages" },
+    {
+      name: "fukuwauchi-messages",
+      // シードデータを更新した際は version を上げる。
+      // migrate で最新シードに置き換わる(デモ前提のため、ユーザー投稿は破棄される)
+      version: 2,
+      migrate: () => ({ messages: DUMMY_MESSAGES }),
+    },
   ),
 );

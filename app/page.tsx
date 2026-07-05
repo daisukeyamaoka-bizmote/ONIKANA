@@ -1,175 +1,219 @@
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { DemoResetButton } from "@/components/shared/demo-reset";
 
+// トップページ — 編集デザイン(左寄せ・明朝見出し・罫線・余白)
+// カードの羅列や中央寄せヒーローを避け、"索引"のような佇まいにする
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-fuku-sand-50">
-      <main className="container-page flex flex-col items-center pt-16 pb-16 sm:pt-24">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-mist-200 bg-paper px-3 py-1 text-xs text-mist-600">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-oni-red" />
-          AIマッチング × 商談セッティング
+    <div className="min-h-screen bg-paper">
+      <main className="mx-auto w-full max-w-5xl px-6 pb-20 pt-16 sm:px-10 sm:pt-24">
+        {/* ブランド行 */}
+        <div className="flex items-center gap-3">
+          <span
+            className="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-oni-red font-serif text-lg text-paper"
+            aria-hidden
+          >
+            福
+          </span>
+          <div className="leading-tight">
+            <p className="font-serif text-lg font-bold tracking-wide text-ink">
+              フクワウチ
+            </p>
+            <p className="text-[11px] uppercase tracking-[0.25em] text-mist-500">
+              AI Business Matching
+            </p>
+          </div>
         </div>
-        <h1 className="text-center text-5xl sm:text-6xl font-bold tracking-tight text-ink">
-          <span className="text-oni-red">フク</span>
-          <span className="text-oni-blue">ワウチ</span>
-        </h1>
-        <p className="mt-3 text-center text-base text-mist-700">
-          福を、企業へ。
-        </p>
-        <p className="mt-1 text-xs text-mist-500">
-          Powered by 株式会社オニカナ
-        </p>
 
-        <p className="mt-8 text-center text-sm text-mist-600 max-w-2xl">
-          ここはデモ用の入口です。下のボタンから3つの利用者役を切り替えてご覧いただけます。
-          ログインは不要、ボタンを押すとそのまま画面に入れます。
-        </p>
+        {/* ヒーロー */}
+        <div className="mt-16 max-w-3xl">
+          <h1 className="font-serif text-5xl font-bold leading-tight tracking-tight text-ink sm:text-6xl">
+            福を、企業へ。
+          </h1>
+          <p className="mt-6 max-w-xl text-[15px] leading-8 text-mist-600">
+            企業の課題と、最適な支援先を、5軸のAIマッチングで結ぶ。
+            株式会社オニカナが運営するビジネスマッチングプラットフォームです。
+            ご利用企業は無料。支援先は商談一件ごとの成果報酬のみ。
+          </p>
+        </div>
 
-        <section className="mt-12 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
-          <RoleCard
+        {/* 入口の索引 */}
+        <section className="mt-20">
+          <div className="flex items-baseline justify-between border-b border-ink pb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.25em] text-mist-500">
+              入口を選ぶ — Demo Entrance
+            </h2>
+            <p className="text-[11px] text-mist-400">ログイン不要</p>
+          </div>
+
+          <EntranceRow
+            index="01"
+            accent="text-oni-blue"
             href="/client/questionnaire"
-            tag="クライアントとして見る"
-            tagAccent="oni-blue"
             title="支援を受けたい企業"
-            description="アンケート → AIレコメンド10社 → 気になる / ぜひ話したい を操作。利用は完全無料。"
-            cta="クライアント画面へ"
+            role="クライアント"
+            description="アンケートに答えると、AIが上位10社を提案。気になる会社を選ぶだけ。利用は無料。"
             shortcuts={[
-              { href: "/client/recommendations", label: "レコメンドへ直行" },
+              { href: "/client/recommendations", label: "レコメンド" },
               { href: "/client/dashboard", label: "ダッシュボード" },
+              { href: "/client/messages", label: "メッセージ" },
             ]}
           />
-          <RoleCard
+          <EntranceRow
+            index="02"
+            accent="text-oni-red"
             href="/supplier/dashboard"
-            tag="支援先(Giver)として見る"
-            tagAccent="oni-red"
             title="支援を提供する企業"
-            description="打診一覧 → アポ単価を確認して承諾 → 日程提案。プロフィール編集も可能。"
-            cta="支援先画面へ"
+            role="支援先(Giver)"
+            description="届いた打診のアポ単価を確認して承諾。メッセージで日程を提案し、商談へ。"
             shortcuts={[
+              { href: "/supplier/offers", label: "打診一覧" },
               { href: "/supplier/profile", label: "プロフィール" },
-              { href: "/supplier/signup", label: "会員登録(プレビュー)" },
+              { href: "/supplier/signup", label: "会員登録" },
             ]}
           />
-          <RoleCard
+          <EntranceRow
+            index="03"
+            accent="text-ink"
             href="/admin/dashboard"
-            tag="管理者として見る"
-            tagAccent="ink"
             title="オニカナ運営"
-            description="KPI・マッチング状況・LIKE可視化・支援先別請求額・スコアリング調整。"
-            cta="管理画面へ"
+            role="管理者"
+            description="KPI・マッチング進捗・LIKE・支援先別請求・スコアリング調整を一元管理。"
             shortcuts={[
-              { href: "/admin/likes", label: "LIKE可視化" },
-              { href: "/admin/companies", label: "企業マスタ" },
+              { href: "/admin/matches", label: "マッチング" },
+              { href: "/admin/likes", label: "LIKE" },
+              { href: "/admin/scoring", label: "スコアリング" },
             ]}
           />
         </section>
 
-        <section className="mt-16 w-full">
-          <h2 className="text-center text-xs font-semibold uppercase tracking-widest text-mist-500">
-            このプラットフォームの特徴
-          </h2>
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <FeatureItem
+        {/* 特徴 */}
+        <section className="mt-20">
+          <div className="border-b border-ink pb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.25em] text-mist-500">
+              特徴 — Why Fukuwauchi
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-x-10 gap-y-8 pt-8 sm:grid-cols-3">
+            <Feature
+              no="一"
               title="5軸AIマッチング"
-              text="業種・規模・課題・地域・予算の5軸+実績スコアで上位10社に絞り込み。"
+              text="業種・規模・課題・地域・予算の5軸に過去実績を重ね、最適な支援先を上位10社まで絞り込みます。"
             />
-            <FeatureItem
-              title="役職別 アポ単価"
-              text="一般¥30,000 / 課長¥50,000 / 役員¥90,000。明確な単価で価値が見える。"
+            <Feature
+              no="二"
+              title="役職別のアポ単価"
+              text="一般 ¥30,000/課長 ¥50,000/役員 ¥90,000。商談一件の価値が、誰にでも明快です。"
             />
-            <FeatureItem
-              title="完全成果報酬モデル"
-              text="商談1時間の実施が成立した時点で課金。発生しないリスクは双方ゼロ。"
+            <Feature
+              no="三"
+              title="完全成果報酬"
+              text="課金は商談1時間の実施が確定した時点のみ。成果がなければ、費用も発生しません。"
             />
           </div>
         </section>
 
-        <div className="mt-12 rounded-2xl border border-mist-200 bg-paper p-4 flex flex-col sm:flex-row items-center justify-between gap-3 w-full max-w-2xl">
-          <p className="text-xs text-mist-600">
-            デモ操作後は LIKE やマッチング状態が残ります。
-            次のデモの前に状態を初期化したい場合はこちら。
+        {/* デモ管理 */}
+        <section className="mt-20 flex flex-col items-start justify-between gap-4 border-t border-mist-200 pt-6 sm:flex-row sm:items-center">
+          <p className="text-xs leading-6 text-mist-500">
+            デモ操作の状態(LIKE・メッセージ・マッチング)はこのブラウザに保存されます。
+            <br className="hidden sm:block" />
+            次のデモの前に初期化する場合は右のボタンを押してください。
           </p>
           <DemoResetButton />
-        </div>
+        </section>
 
-        <footer className="mt-16 text-center text-xs text-mist-500">
-          Powered by{" "}
-          <span className="font-semibold text-mist-700">bizmote</span>
-          {"  ·  "}
-          <span>デモ版 v0.4 — フクワウチ</span>
+        <footer className="mt-16 flex items-center justify-between text-[11px] text-mist-400">
+          <span>
+            運営 株式会社オニカナ ・ 開発 bizmote株式会社
+          </span>
+          <span>Demo v0.5</span>
         </footer>
       </main>
     </div>
   );
 }
 
-const TAG_CLASSES = {
-  "oni-blue": "bg-oni-blue text-paper",
-  "oni-red": "bg-oni-red text-paper",
-  ink: "bg-ink text-paper",
-} as const;
-
-function RoleCard({
+function EntranceRow({
+  index,
+  accent,
   href,
-  tag,
-  tagAccent,
   title,
+  role,
   description,
-  cta,
   shortcuts,
 }: {
+  index: string;
+  accent: string;
   href: string;
-  tag: string;
-  tagAccent: keyof typeof TAG_CLASSES;
   title: string;
+  role: string;
   description: string;
-  cta: string;
-  shortcuts?: { href: string; label: string }[];
+  shortcuts: { href: string; label: string }[];
 }) {
   return (
-    <Card className="h-full transition hover:shadow-card-hover hover:-translate-y-0.5 border-mist-200">
-      <CardContent className="flex h-full flex-col">
+    <div className="group border-b border-mist-200">
+      <div className="flex flex-col gap-3 py-8 sm:flex-row sm:items-start sm:gap-8">
         <span
-          className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${TAG_CLASSES[tagAccent]}`}
+          className={`font-serif text-3xl font-bold leading-none ${accent}`}
         >
-          {tag}
+          {index}
         </span>
-        <h3 className="mt-4 text-xl font-semibold text-ink">{title}</h3>
-        <p className="mt-2 flex-1 text-sm text-mist-600">{description}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <Link
+              href={href}
+              className="font-serif text-2xl font-bold text-ink underline-offset-4 hover:underline"
+            >
+              {title}
+            </Link>
+            <span className="text-xs tracking-widest text-mist-500">
+              {role}
+            </span>
+          </div>
+          <p className="mt-2 max-w-xl text-sm leading-7 text-mist-600">
+            {description}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+            {shortcuts.map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="text-xs text-mist-500 underline-offset-2 hover:text-ink hover:underline"
+              >
+                {s.label}
+              </Link>
+            ))}
+          </div>
+        </div>
         <Link
           href={href}
-          className="mt-5 inline-flex items-center text-sm font-semibold text-ink hover:underline underline-offset-4"
+          className="hidden shrink-0 self-center text-2xl text-mist-300 transition group-hover:translate-x-1 group-hover:text-ink sm:block"
+          aria-label={`${title}へ`}
         >
-          {cta}
-          <span className="ml-1">→</span>
+          →
         </Link>
-        {shortcuts && shortcuts.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-mist-100">
-            <p className="text-xs text-mist-500 mb-1">直接アクセス</p>
-            <div className="flex flex-wrap gap-1.5">
-              {shortcuts.map((s) => (
-                <Link
-                  key={s.href}
-                  href={s.href}
-                  className="rounded-full border border-mist-300 px-2 py-0.5 text-xs text-mist-700 hover:bg-mist-50"
-                >
-                  {s.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
-function FeatureItem({ title, text }: { title: string; text: string }) {
+function Feature({
+  no,
+  title,
+  text,
+}: {
+  no: string;
+  title: string;
+  text: string;
+}) {
   return (
-    <div className="rounded-xl border border-mist-200 bg-paper p-5">
-      <h4 className="text-base font-semibold text-ink">{title}</h4>
-      <p className="mt-1 text-sm text-mist-600">{text}</p>
+    <div>
+      <div className="flex items-baseline gap-3">
+        <span className="font-serif text-sm text-oni-red">{no}</span>
+        <h3 className="font-serif text-lg font-bold text-ink">{title}</h3>
+      </div>
+      <p className="mt-3 text-[13px] leading-7 text-mist-600">{text}</p>
     </div>
   );
 }
